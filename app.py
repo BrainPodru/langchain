@@ -477,23 +477,23 @@ class ChatWrapper:
 
             html_video, temp_file, html_audio, temp_aud_file = None, None, None, None
             if speak_text:
-                if talking_head:
-                    if len(output) <= MAX_TALKING_HEAD_TEXT_LENGTH:
-                        html_video, temp_file = do_html_video_speak(output, translate_to)
-                    else:
-                        temp_file = LOOPING_TALKING_HEAD
-                        html_video = create_html_video(temp_file, TALKING_HEAD_WIDTH)
-                        html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
-                else:
-                    html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
+                # if talking_head:
+                #     if len(output) <= MAX_TALKING_HEAD_TEXT_LENGTH:
+                #         html_video, temp_file = do_html_video_speak(output, translate_to)
+                #     else:
+                #         temp_file = LOOPING_TALKING_HEAD
+                #         html_video = create_html_video(temp_file, TALKING_HEAD_WIDTH)
+                #         html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
+                # else:
+                html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
             else:
-                if talking_head:
-                    temp_file = LOOPING_TALKING_HEAD
-                    html_video = create_html_video(temp_file, TALKING_HEAD_WIDTH)
-                else:
-                    # html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
-                    # html_video = create_html_video(temp_file, "128")
-                    pass
+                # if talking_head:
+                #     temp_file = LOOPING_TALKING_HEAD
+                #     html_video = create_html_video(temp_file, TALKING_HEAD_WIDTH)
+                # else:
+                #     # html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
+                #     # html_video = create_html_video(temp_file, "128")
+                pass
 
         except Exception as e:
             raise e
@@ -782,9 +782,9 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
         # speak_text_cb.change(update_foo, inputs=[speak_text_cb, speak_text_state],
         #                      outputs=[speak_text_state])
 
-        talking_head_cb = gr.Checkbox(label="Show talking head", value=False)
-        talking_head_cb.change(update_talking_head, inputs=[talking_head_cb, talking_head_state],
-                               outputs=[talking_head_state, video_html])
+        # talking_head_cb = gr.Checkbox(label="Show talking head", value=False)
+        # talking_head_cb.change(update_talking_head, inputs=[talking_head_cb, talking_head_state],
+        #                        outputs=[talking_head_state, video_html])
 
         monologue_cb = gr.Checkbox(label="Babel fish mode (translate/restate what you enter, no conversational agent)",
                                    value=False)
