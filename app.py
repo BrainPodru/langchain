@@ -56,7 +56,7 @@ TOOLS_DEFAULT_LIST = ['wolfram-alpha', 'google-search', 'pal-math', 'pal-colored
 BUG_FOUND_MSG = "Congratulations, you've found a bug in this application!"
 # AUTH_ERR_MSG = "Please paste your OpenAI key from openai.com to use this application. It is not necessary to hit a button or key after pasting it."
 AUTH_ERR_MSG = "Please paste your OpenAI key from openai.com to use this application. "
-MAX_TOKENS = 512
+MAX_TOKENS = 2048
 
 LOOPING_TALKING_HEAD = ""
 TALKING_HEAD_WIDTH = "192"
@@ -291,7 +291,8 @@ def set_openai_api_key(api_key, use_gpt4):
             print("Trying to use llm ChatOpenAI with gpt-4")
         else:
             print("Trying to use llm ChatOpenAI with gpt-3.5-turbo")
-            llm = ChatOpenAI(temperature=0, max_tokens=MAX_TOKENS, model_name="gpt-3.5-turbo")
+            # llm = ChatOpenAI(temperature=0, max_tokens=MAX_TOKENS, model_name="gpt-3.5-turbo")
+            llm = ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo")
 
         print(str(datetime.datetime.now()) + ": After OpenAI, OPENAI_API_KEY length: " + str(
             len(os.environ["OPENAI_API_KEY"])))
@@ -329,7 +330,7 @@ def run_chain(chain, inp, capture_hidden_text):
             error_msg = AUTH_ERR_MSG + str(datetime.datetime.now()) + ". " + str(ae)
             print("error_msg", error_msg)
         except RateLimitError as rle:
-            sleep(20)
+            # sleep(20)
             error_msg = "\n\nRateLimitError: " + str(rle)
         except ValueError as ve:
             pass
@@ -940,28 +941,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                          inputs=[embeddings_text_box, embeddings_state, qa_chain_state],
                                          outputs=[docsearch_state])
 
-    gr.HTML("""
-        <p>This application, developed by <a href='https://www.linkedin.com/in/javafxpert/'>James L. Weaver</a>, 
-        demonstrates a conversational agent implemented with OpenAI GPT-3.5 and LangChain. 
-        When necessary, it leverages tools for complex math, searching the internet, and accessing news and weather.
-        Uses talking heads from <a href='https://exh.ai/'>Ex-Human</a>.
-        For faster inference without waiting in queue, you may duplicate the space.
-        </p>""")
-
-    gr.HTML("""
-<form action="https://www.paypal.com/donate" method="post" target="_blank">
-<input type="hidden" name="business" value="AK8BVNALBXSPQ" />
-<input type="hidden" name="no_recurring" value="0" />
-<input type="hidden" name="item_name" value="Please consider helping to defray the cost of APIs such as SerpAPI and WolframAlpha that this app uses." />
-<input type="hidden" name="currency_code" value="USD" />
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-</form>
-    """)
-
     gr.HTML("""<center>
-        <a href="https://huggingface.co/spaces/JavaFXpert/Chat-GPT-LangChain?duplicate=true">
-        <img style="margin-top: 0em; margin-bottom: 0em" src="https://bit.ly/3gLdBN6" alt="Duplicate Space"></a>
         Powered by <a href='https://github.com/hwchase17/langchain'>LangChain 🦜️🔗</a>
         </center>""")
 
