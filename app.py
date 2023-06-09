@@ -684,22 +684,22 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                                 show_label=False, lines=1, type='password', value=OPENAI_API_KEY)
 
         with gr.Row():
-            with gr.Column(scale=1, min_width=TALKING_HEAD_WIDTH, visible=False):
-                speak_text_cb = gr.Checkbox(label="Enable speech", value=False)
-                speak_text_cb.change(update_foo, inputs=[speak_text_cb, speak_text_state],
-                                     outputs=[speak_text_state])
+        #     with gr.Column(scale=1, min_width=TALKING_HEAD_WIDTH, visible=False):
+        #         speak_text_cb = gr.Checkbox(label="Enable speech", value=False)
+        #         speak_text_cb.change(update_foo, inputs=[speak_text_cb, speak_text_state],
+        #                              outputs=[speak_text_state])
 
-                my_file = gr.File(label="Upload a file", type="file", visible=False)
-                tmp_file = gr.File(LOOPING_TALKING_HEAD, visible=False)
-                # tmp_file_url = "/file=" + tmp_file.value['name']
-                htm_video = create_html_video(LOOPING_TALKING_HEAD, TALKING_HEAD_WIDTH)
-                video_html = gr.HTML(htm_video)
+        #         my_file = gr.File(label="Upload a file", type="file", visible=False)
+        #         tmp_file = gr.File(LOOPING_TALKING_HEAD, visible=False)
+        #         # tmp_file_url = "/file=" + tmp_file.value['name']
+        #         htm_video = create_html_video(LOOPING_TALKING_HEAD, TALKING_HEAD_WIDTH)
+        #         video_html = gr.HTML(htm_video)
 
-                # my_aud_file = gr.File(label="Audio file", type="file", visible=True)
-                tmp_aud_file = gr.File("audios/tempfile.mp3", visible=False)
-                tmp_aud_file_url = "/file=" + tmp_aud_file.value['name']
-                htm_audio = f'<audio><source src={tmp_aud_file_url} type="audio/mp3"></audio>'
-                audio_html = gr.HTML(htm_audio)
+        #         # my_aud_file = gr.File(label="Audio file", type="file", visible=True)
+        #         tmp_aud_file = gr.File("audios/tempfile.mp3", visible=False)
+        #         tmp_aud_file_url = "/file=" + tmp_aud_file.value['name']
+        #         htm_audio = f'<audio><source src={tmp_aud_file_url} type="audio/mp3"></audio>'
+        #         audio_html = gr.HTML(htm_audio)
 
             with gr.Column(scale=7):
                 chatbot = gr.Chatbot()
