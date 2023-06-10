@@ -518,7 +518,8 @@ class ChatWrapper:
 
             if not chain:
                 chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4 = set_openai_api_key(OPENAI_API_KEY, USE_GPT4_DEFAULT)
-            else:
+            
+            if chain:
                 # Set OpenAI key
                 import openai
                 openai.api_key = api_key
