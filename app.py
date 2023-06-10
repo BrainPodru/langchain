@@ -10,8 +10,8 @@ import gradio as gr
 import requests
 
 #  UNCOMMENT TO USE WHISPER
-import warnings
-import whisper
+# import warnings
+# import whisper
 
 from langchain import ConversationChain, LLMChain
 
@@ -42,6 +42,8 @@ from langchain.docstore.document import Document
 from langchain.chains.question_answering import load_qa_chain
 
 from dotenv import load_dotenv
+# from pydub import AudioSegment
+
 
 load_dotenv()
 
@@ -118,6 +120,9 @@ WHISPER_URL = "https://api.runpod.ai/v2/faster-whisper/runsync"
 def transcribe(aud_inp, whisper_lang):
     if aud_inp is None:
         return ""
+    
+    print("aud_inp", aud_inp)
+    
 
     payload = {"input": {
             "audio": aud_inp,
