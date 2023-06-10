@@ -51,12 +51,6 @@ serpapi_api_key = os.environ["SERPAPI_API_KEY"]
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 WHISPER_API_KEY = os.environ["WHISPER_API_KEY"]
 
-# Pertains to question answering functionality
-OPENAI_EMBEDDINGS = OpenAIEmbeddings()
-OPENAI_EMBEDDINGS.load()
-
-# Pertains to question answering functionality
-
 TOOLS_LIST = ['wolfram-alpha', 'pal-math',
               'pal-colored-objects', 'google-search', 'news-api','tmdb-api']  # 'serpapi', 'google-search','news-api','tmdb-api','open-meteo-api'
 TOOLS_DEFAULT_LIST = ['wolfram-alpha', 'google-search', 'pal-math', 'pal-colored-objects', 'news-api','tmdb-api']
