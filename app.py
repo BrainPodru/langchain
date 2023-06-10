@@ -8,6 +8,8 @@ import datetime
 import boto3
 import gradio as gr
 import requests
+import time
+
 
 #  UNCOMMENT TO USE WHISPER
 # import warnings
@@ -42,8 +44,6 @@ from langchain.docstore.document import Document
 from langchain.chains.question_answering import load_qa_chain
 
 from dotenv import load_dotenv
-# from pydub import AudioSegment
-
 
 load_dotenv()
 
@@ -89,6 +89,10 @@ AZURE_VOICE_DATA = AzureVoiceData()
 # Pertains to WHISPER functionality
 WHISPER_DETECT_LANG = "Russian"
 WHISPER_URL = "https://api.runpod.ai/v2/faster-whisper/runsync"
+AWS_DEFAULT_REGION = os.environ["AWS_DEFAULT_REGION"]
+BUCKET_NAME = 'langchain57'
+
+s3 = boto3.client('s3')
 
 
 # UNCOMMENT TO USE WHISPER
@@ -121,11 +125,13 @@ def transcribe(aud_inp, whisper_lang):
     if aud_inp is None:
         return ""
     
-    print("aud_inp", aud_inp)
-    
+    audio_url = share_url(aud_inp)
+
+    print('whisper_lang:')
+    print(whisper_lang)
 
     payload = {"input": {
-            "audio": aud_inp,
+            "audio": audio_url,
             "model": "base",
             "transcription": "plain text",
             "translate": False,
@@ -172,6 +178,25 @@ def transcribe(aud_inp, whisper_lang):
 
 # Temporarily address Wolfram Alpha SSL certificate issue
 ssl._create_default_https_context = ssl._create_unverified_context
+
+# AWS AUDIO FILE URL
+def share_url(aud_inp):
+    unix_time = int(time.time())
+    dest_key = f"{unix_time}_aud.mp3"
+
+    # upload file to aws
+    s3.upload_file(aud_inp, BUCKET_NAME, dest_key)
+
+    # set permission
+    response_acl = s3.put_object_acl(
+        Bucket=BUCKET_NAME,
+        Key=dest_key,
+        ACL='public-read',
+    )
+
+    url = "https://" + BUCKET_NAME + ".s3." + AWS_DEFAULT_REGION + ".amazonaws.com/" + dest_key
+
+    return url    
 
 
 # TEMPORARY FOR TESTING
