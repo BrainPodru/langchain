@@ -773,7 +773,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
         # UNCOMMENT TO USE WHISPER
         with gr.Row():
             audio_comp = gr.Microphone(source="microphone", type="filepath", label="Just say it!",
-                                       interactive=True, streaming=False)
+                                       interactive=True, streaming=False, format="mp3")
             audio_comp.change(transcribe, inputs=[audio_comp, whisper_lang_state], outputs=[message])
 
         # TEMPORARY FOR TESTING
