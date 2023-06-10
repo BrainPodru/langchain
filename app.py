@@ -407,7 +407,7 @@ def set_openai_api_key(api_key, use_gpt4):
         return chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4
     return None, None, None, None, None, None, None
 
-chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4 = set_openai_api_key(OPENAI_API_KEY, USE_GPT4_DEFAULT)
+# chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4 = set_openai_api_key(OPENAI_API_KEY, USE_GPT4_DEFAULT)
 
 def run_chain(chain, inp, capture_hidden_text):
     output = ""
@@ -515,6 +515,8 @@ class ChatWrapper:
             # If chain is None, that is because no API key was provided.
             output = "Please paste your OpenAI key from openai.com to use this app. " + str(datetime.datetime.now())
             hidden_text = output
+            chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4 = set_openai_api_key(OPENAI_API_KEY, USE_GPT4_DEFAULT)
+
 
             if chain:
                 # Set OpenAI key
