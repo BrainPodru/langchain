@@ -1069,5 +1069,5 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                   outputs=[chain_state, express_chain_state, llm_state, embeddings_state,
                                            qa_chain_state, memory_state, use_gpt4_state])
 
-block.launch(debug=True, share=True)
-# block.launch(debug=True, server_name="0.0.0.0")
+# block.launch(debug=True, share=True)
+block.launch(debug=True, server_name="0.0.0.0")
