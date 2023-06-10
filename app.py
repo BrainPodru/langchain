@@ -54,8 +54,8 @@ OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 WHISPER_API_KEY = os.environ["WHISPER_API_KEY"]
 
 TOOLS_LIST = ['wolfram-alpha', 'pal-math',
-              'pal-colored-objects', 'google-search', 'news-api','tmdb-api','wikipedia','youtubesearch']  # 'serpapi', 'google-search','news-api','tmdb-api','open-meteo-api'
-TOOLS_DEFAULT_LIST = ['wolfram-alpha', 'google-search', 'pal-math', 'pal-colored-objects', 'news-api','tmdb-api','wikipedia','youtubesearch']
+              'pal-colored-objects', 'google-search', 'news-api','tmdb-api','wikipedia']  # 'serpapi', 'google-search','news-api','tmdb-api','open-meteo-api'
+TOOLS_DEFAULT_LIST = ['wolfram-alpha', 'google-search', 'pal-math', 'pal-colored-objects', 'news-api','tmdb-api','wikipedia']
 BUG_FOUND_MSG = "Congratulations, you've found a bug in this application!"
 # AUTH_ERR_MSG = "Please paste your OpenAI key from openai.com to use this application. It is not necessary to hit a button or key after pasting it."
 AUTH_ERR_MSG = "Please paste your OpenAI key from openai.com to use this application. "

@@ -11,4 +11,5 @@ faiss-cpu==1.7.4
 sqlalchemy==2.0.15
 psutil==5.9.5
 python-dotenv
-
+wikipedia
+youtube_search
