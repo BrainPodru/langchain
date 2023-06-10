@@ -409,6 +409,7 @@ def set_openai_api_key(api_key, use_gpt4):
         return chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4
     return None, None, None, None, None, None, None
 
+chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4 = set_openai_api_key(OPENAI_API_KEY, USE_GPT4_DEFAULT)
 
 
 def run_chain(chain, inp, capture_hidden_text):
