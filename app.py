@@ -286,6 +286,9 @@ def transform_text(desc, express_chain, num_words, formality,
         print("===is_N_level", is_N_level)
         translate_to_str = "translated to " + translate_to + (
             "" if lang_level == LANG_LEVEL_DEFAULT or is_N_level else " " + lang_level_frag) + ", "
+        
+    print("===translate_to_str", translate_to_str)
+    
 
     literary_style_str = ""
     if literary_style != LITERARY_STYLE_DEFAULT:
@@ -325,6 +328,9 @@ def transform_text(desc, express_chain, num_words, formality,
     )
 
     trans_instr = num_words_prompt + formality_str + emotions_str + lang_level_str + translate_to_str + literary_style_str
+
+    print("trans_instr: " + trans_instr)
+    
     if express_chain and len(trans_instr.strip()) > 0:
         generated_text = express_chain.run(
             {'original_words': desc, 'num_words': num_words_prompt, 'formality': formality_str,
