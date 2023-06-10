@@ -1061,14 +1061,14 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                 #  outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
                  outputs=[chatbot, history_state, message])
 
-    openai_api_key_textbox.change(set_openai_api_key,
-                                  inputs=[OPENAI_API_KEY, USE_GPT4_DEFAULT],
-                                  outputs=[chain_state, express_chain_state, llm_state, embeddings_state,
-                                           qa_chain_state, memory_state, use_gpt4_state])
-    openai_api_key_textbox.submit(set_openai_api_key,
-                                  inputs=[OPENAI_API_KEY, USE_GPT4_DEFAULT],
-                                  outputs=[chain_state, express_chain_state, llm_state, embeddings_state,
-                                           qa_chain_state, memory_state, use_gpt4_state])
+    # openai_api_key_textbox.change(set_openai_api_key,
+    #                               inputs=[openai_api_key_textbox, use_gpt4_state],
+    #                               outputs=[chain_state, express_chain_state, llm_state, embeddings_state,
+    #                                        qa_chain_state, memory_state, use_gpt4_state])
+    # openai_api_key_textbox.submit(set_openai_api_key,
+    #                               inputs=[openai_api_key_textbox, use_gpt4_state],
+    #                               outputs=[chain_state, express_chain_state, llm_state, embeddings_state,
+    #                                        qa_chain_state, memory_state, use_gpt4_state])
 
 # block.launch(debug=True, share=True)
 block.launch(debug=True, server_name="0.0.0.0")
