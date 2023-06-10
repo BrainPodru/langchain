@@ -1031,4 +1031,4 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                            qa_chain_state, memory_state, use_gpt4_state])
 
 # block.launch(debug=True, share=True)
-block.launch(debug=True)
+block.launch(debug=True, server_name="0.0.0.0")
