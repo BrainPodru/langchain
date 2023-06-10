@@ -127,15 +127,17 @@ def transcribe(aud_inp, whisper_lang):
     
     audio_url = share_url(aud_inp)
 
-    print('whisper_lang:')
-    print(whisper_lang)
-
+    if whisper_lang == "Russian":
+        lang = "ru"
+    else:
+        lang = ""
+    
     payload = {"input": {
             "audio": audio_url,
             "model": "base",
             "transcription": "plain text",
             "translate": False,
-            "language": whisper_lang,
+            "language": lang,
             "temperature": 0,
             "best_of": 5,
             "beam_size": 5,
