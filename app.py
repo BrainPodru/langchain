@@ -287,6 +287,7 @@ def transform_text(desc, express_chain, num_words, formality,
         translate_to_str = "translated to " + translate_to + (
             "" if lang_level == LANG_LEVEL_DEFAULT or is_N_level else " " + lang_level_frag) + ", "
         
+    print("===translate_to", translate_to)
     print("===translate_to_str", translate_to_str)
     
 
