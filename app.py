@@ -49,6 +49,13 @@ news_api_key = os.environ["NEWS_API_KEY"]
 tmdb_bearer_token = os.environ["TMDB_BEARER_TOKEN"]
 serpapi_api_key = os.environ["SERPAPI_API_KEY"]
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+WHISPER_API_KEY = os.environ["WHISPER_API_KEY"]
+
+# Pertains to question answering functionality
+OPENAI_EMBEDDINGS = OpenAIEmbeddings()
+OPENAI_EMBEDDINGS.load()
+
+# Pertains to question answering functionality
 
 TOOLS_LIST = ['wolfram-alpha', 'pal-math',
               'pal-colored-objects', 'google-search', 'news-api','tmdb-api']  # 'serpapi', 'google-search','news-api','tmdb-api','open-meteo-api'
@@ -85,31 +92,77 @@ AZURE_VOICE_DATA = AzureVoiceData()
 
 # Pertains to WHISPER functionality
 WHISPER_DETECT_LANG = "Russian"
-
-# UNCOMMENT TO USE WHISPER
-warnings.filterwarnings("ignore")
-WHISPER_MODEL = whisper.load_model("tiny")
-print("WHISPER_MODEL", WHISPER_MODEL)
+WHISPER_URL = "https://api.runpod.ai/v2/faster-whisper/runsync"
 
 
 # UNCOMMENT TO USE WHISPER
+# warnings.filterwarnings("ignore")
+# WHISPER_MODEL = whisper.load_model("tiny")
+# print("WHISPER_MODEL", WHISPER_MODEL)
+
+
+# UNCOMMENT TO USE LOCAL WHISPER
+# def transcribe(aud_inp, whisper_lang):
+#     if aud_inp is None:
+#         return ""
+#     aud = whisper.load_audio(aud_inp)
+#     aud = whisper.pad_or_trim(aud)
+#     mel = whisper.log_mel_spectrogram(aud).to(WHISPER_MODEL.device)
+#     _, probs = WHISPER_MODEL.detect_language(mel)
+#     options = whisper.DecodingOptions()
+#     if whisper_lang != WHISPER_DETECT_LANG:
+#         whisper_lang_code = POLLY_VOICE_DATA.get_whisper_lang_code(whisper_lang)
+#         options = whisper.DecodingOptions(language=whisper_lang_code)
+#     result = whisper.decode(WHISPER_MODEL, mel, options)
+#     print("result.text", result.text)
+#     result_text = ""
+#     if result and result.text:
+#         result_text = result.text
+#     return result_text
+
+# SERVERLESS WHISPER
 def transcribe(aud_inp, whisper_lang):
     if aud_inp is None:
         return ""
-    aud = whisper.load_audio(aud_inp)
-    aud = whisper.pad_or_trim(aud)
-    mel = whisper.log_mel_spectrogram(aud).to(WHISPER_MODEL.device)
-    _, probs = WHISPER_MODEL.detect_language(mel)
-    options = whisper.DecodingOptions()
-    if whisper_lang != WHISPER_DETECT_LANG:
-        whisper_lang_code = POLLY_VOICE_DATA.get_whisper_lang_code(whisper_lang)
-        options = whisper.DecodingOptions(language=whisper_lang_code)
-    result = whisper.decode(WHISPER_MODEL, mel, options)
-    print("result.text", result.text)
-    result_text = ""
-    if result and result.text:
-        result_text = result.text
-    return result_text
+
+    payload = {"input": {
+            "audio": aud_inp,
+            "model": "base",
+            "transcription": "plain text",
+            "translate": False,
+            "language": whisper_lang,
+            "temperature": 0,
+            "best_of": 5,
+            "beam_size": 5,
+            "suppress_tokens": "-1",
+            "condition_on_previous_text": False,
+            "temperature_increment_on_fallback": 0.2,
+            "compression_ratio_threshold": 2.4,
+            "logprob_threshold": -1,
+            "no_speech_threshold": 0.6
+        }}
+    headers = {
+        "accept": "application/json",
+        "content-type": "application/json",
+        "Authorization": "Bearer " + WHISPER_API_KEY
+    }
+
+    response = requests.post(WHISPER_URL, json=payload, headers=headers)
+
+    data = response.json()
+    segment = data['output']['segments'][0]
+    text = segment['text']
+
+    print("whisper.text:", text)
+
+    return text
+
+
+# Pertains to Express-inator functionality
+def get_express_chain(formality, temperature, emotion, lang_level, literary_style):
+    if formality == "formal":
+        formality = "formal"
+    elif formality == "
 
 # Temporarily address Wolfram Alpha SSL certificate issue
 ssl._create_default_https_context = ssl._create_unverified_context
