@@ -54,8 +54,8 @@ OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 WHISPER_API_KEY = os.environ["WHISPER_API_KEY"]
 
 TOOLS_LIST = ['wolfram-alpha', 'pal-math',
-              'pal-colored-objects', 'google-search', 'news-api','tmdb-api']  # 'serpapi', 'google-search','news-api','tmdb-api','open-meteo-api'
-TOOLS_DEFAULT_LIST = ['wolfram-alpha', 'google-search', 'pal-math', 'pal-colored-objects', 'news-api','tmdb-api']
+              'pal-colored-objects', 'google-search', 'news-api','tmdb-api','wikipedia','youtubesearch']  # 'serpapi', 'google-search','news-api','tmdb-api','open-meteo-api'
+TOOLS_DEFAULT_LIST = ['wolfram-alpha', 'google-search', 'pal-math', 'pal-colored-objects', 'news-api','tmdb-api','wikipedia','youtubesearch']
 BUG_FOUND_MSG = "Congratulations, you've found a bug in this application!"
 # AUTH_ERR_MSG = "Please paste your OpenAI key from openai.com to use this application. It is not necessary to hit a button or key after pasting it."
 AUTH_ERR_MSG = "Please paste your OpenAI key from openai.com to use this application. "
@@ -515,9 +515,6 @@ class ChatWrapper:
             # If chain is None, that is because no API key was provided.
             output = "Please paste your OpenAI key from openai.com to use this app. " + str(datetime.datetime.now())
             hidden_text = output
-
-            if not chain:
-                chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4 = set_openai_api_key(OPENAI_API_KEY, USE_GPT4_DEFAULT)
             
             if chain:
                 # Set OpenAI key
@@ -600,7 +597,7 @@ class ChatWrapper:
         return history, history, html_video, temp_file, html_audio, temp_aud_file, ""
         # return history, history, html_audio, temp_aud_file, ""
 
-
+chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4 = set_openai_api_key(OPENAI_API_KEY, USE_GPT4_DEFAULT)
 chat = ChatWrapper()
 
 
