@@ -158,12 +158,6 @@ def transcribe(aud_inp, whisper_lang):
     return text
 
 
-# Pertains to Express-inator functionality
-def get_express_chain(formality, temperature, emotion, lang_level, literary_style):
-    if formality == "formal":
-        formality = "formal"
-    elif formality == "
-
 # Temporarily address Wolfram Alpha SSL certificate issue
 ssl._create_default_https_context = ssl._create_unverified_context
 
