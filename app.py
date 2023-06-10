@@ -1062,11 +1062,11 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                  outputs=[chatbot, history_state, message])
 
     openai_api_key_textbox.change(set_openai_api_key,
-                                  inputs=[openai_api_key_textbox, use_gpt4_state],
+                                  inputs=[OPENAI_API_KEY, USE_GPT4_DEFAULT],
                                   outputs=[chain_state, express_chain_state, llm_state, embeddings_state,
                                            qa_chain_state, memory_state, use_gpt4_state])
     openai_api_key_textbox.submit(set_openai_api_key,
-                                  inputs=[openai_api_key_textbox, use_gpt4_state],
+                                  inputs=[OPENAI_API_KEY, USE_GPT4_DEFAULT],
                                   outputs=[chain_state, express_chain_state, llm_state, embeddings_state,
                                            qa_chain_state, memory_state, use_gpt4_state])
 
