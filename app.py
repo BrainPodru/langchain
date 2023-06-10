@@ -1042,8 +1042,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
         Powered by <a href='https://github.com/hwchase17/langchain'>LangChain 🦜️🔗</a>
         </center>""")
 
-    # message.submit(chat, inputs=[openai_api_key_textbox, message, history_state, chain_state, trace_chain_state,
-    message.submit(chat, inputs=[openai_api_key, message, history_state, chain_state, trace_chain_state,
+    message.submit(chat, inputs=[openai_api_key_textbox, message, history_state, chain_state, trace_chain_state,
                                  speak_text_state, talking_head_state, monologue_state,
                                  express_chain_state, num_words_state, formality_state,
                                  anticipation_level_state, joy_level_state, trust_level_state, fear_level_state,
@@ -1054,8 +1053,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                 #    outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
                    outputs=[chatbot, history_state, message])
 
-    # submit.click(chat, inputs=[openai_api_key_textbox, message, history_state, chain_state, trace_chain_state,
-    submit.click(chat, inputs=[openai_api_key, message, history_state, chain_state, trace_chain_state,
+    submit.click(chat, inputs=[openai_api_key_textbox, message, history_state, chain_state, trace_chain_state,
                                speak_text_state, talking_head_state, monologue_state,
                                express_chain_state, num_words_state, formality_state,
                                anticipation_level_state, joy_level_state, trust_level_state, fear_level_state,
