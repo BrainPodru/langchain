@@ -287,8 +287,8 @@ def transform_text(desc, express_chain, num_words, formality,
         translate_to_str = "translated to " + translate_to + (
             "" if lang_level == LANG_LEVEL_DEFAULT or is_N_level else " " + lang_level_frag) + ", "
         
-    print("===translate_to", translate_to)
-    print("===translate_to_str", translate_to_str)
+    # print("===translate_to", translate_to)
+    # print("===translate_to_str", translate_to_str)
     
 
     literary_style_str = ""
@@ -514,6 +514,7 @@ class ChatWrapper:
             # If chain is None, that is because no API key was provided.
             output = "Please paste your OpenAI key from openai.com to use this app. " + str(datetime.datetime.now())
             hidden_text = output
+            set_openai_api_key(OPENAI_API_KEY, USE_GPT4_DEFAULT)
 
             if chain:
                 # Set OpenAI key
