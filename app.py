@@ -770,7 +770,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
     use_gpt4_state = gr.State(USE_GPT4_DEFAULT)
 
     with gr.Tab("Chat"):
-        with gr.Row():
+        with gr.Row(visible=False):
             with gr.Column():
                 gr.HTML(
                     """<b><center>GPT + WolframAlpha + Whisper</center></b>
