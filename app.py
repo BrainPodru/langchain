@@ -407,6 +407,7 @@ def set_openai_api_key(api_key, use_gpt4):
         return chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4
     return None, None, None, None, None, None, None
 
+chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4 = set_openai_api_key(OPENAI_API_KEY, USE_GPT4_DEFAULT)
 
 def run_chain(chain, inp, capture_hidden_text):
     output = ""
@@ -514,7 +515,6 @@ class ChatWrapper:
             # If chain is None, that is because no API key was provided.
             output = "Please paste your OpenAI key from openai.com to use this app. " + str(datetime.datetime.now())
             hidden_text = output
-            set_openai_api_key(OPENAI_API_KEY, USE_GPT4_DEFAULT)
 
             if chain:
                 # Set OpenAI key
@@ -729,17 +729,17 @@ def update_use_embeddings(widget, state):
 
 
 with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
-    llm_state = gr.State()
+    llm_state = gr.State(lambda: llm)
     history_state = gr.State()
-    chain_state = gr.State()
-    express_chain_state = gr.State()
+    chain_state = gr.State(lambda: chain)
+    express_chain_state = gr.State(lambda: express_chain)
     tools_list_state = gr.State(TOOLS_DEFAULT_LIST)
     trace_chain_state = gr.State(False)
     speak_text_state = gr.State(False)
     talking_head_state = gr.State(False)
     monologue_state = gr.State(False)  # Takes the input and repeats it back to the user, optionally transforming it.
     force_translate_state = gr.State(FORCE_TRANSLATE_DEFAULT)  #
-    memory_state = gr.State()
+    memory_state = gr.State(memory)
 
     # Pertains to Express-inator functionality
     num_words_state = gr.State(NUM_WORDS_DEFAULT)
@@ -760,8 +760,8 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
     whisper_lang_state = gr.State(WHISPER_DETECT_LANG)
 
     # Pertains to question answering functionality
-    embeddings_state = gr.State()
-    qa_chain_state = gr.State()
+    embeddings_state = gr.State(embeddings)
+    qa_chain_state = gr.State(lambda: qa_chain)
     docsearch_state = gr.State()
     use_embeddings_state = gr.State(False)
 
