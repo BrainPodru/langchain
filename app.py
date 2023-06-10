@@ -52,6 +52,13 @@ tmdb_bearer_token = os.environ["TMDB_BEARER_TOKEN"]
 serpapi_api_key = os.environ["SERPAPI_API_KEY"]
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 WHISPER_API_KEY = os.environ["WHISPER_API_KEY"]
+openai_api_key = OPENAI_API_KEY
+
+# TODO: Change to True for production
+DEBUG = False
+
+# Pertains to question answering functionality
+QUESTION_ANSWERING_MODEL_PATH = "models/question_answering/faiss
 
 TOOLS_LIST = ['wolfram-alpha', 'pal-math',
               'pal-colored-objects', 'google-search', 'news-api','tmdb-api','wikipedia']  # 'serpapi', 'google-search','news-api','tmdb-api','open-meteo-api'
@@ -91,8 +98,6 @@ WHISPER_DETECT_LANG = "Russian"
 WHISPER_URL = "https://api.runpod.ai/v2/faster-whisper/runsync"
 AWS_DEFAULT_REGION = os.environ["AWS_DEFAULT_REGION"]
 BUCKET_NAME = 'langchain57'
-
-api_enabled = False
 
 s3 = boto3.client('s3')
 
@@ -376,7 +381,7 @@ def set_openai_api_key(api_key, use_gpt4):
     If no api_key, then None is returned.
     """
     if api_key and api_key.startswith("sk-") and len(api_key) > 50:
-        os.environ["OPENAI_API_KEY"] = api_key
+        # os.environ["OPENAI_API_KEY"] = api_key
         print("\n\n ++++++++++++++ Setting OpenAI API key ++++++++++++++ \n\n")
         print(str(datetime.datetime.now()) + ": Before OpenAI, OPENAI_API_KEY length: " + str(
             len(os.environ["OPENAI_API_KEY"])))
@@ -518,53 +523,51 @@ class ChatWrapper:
             output = "Please paste your OpenAI key from openai.com to use this app. " + str(datetime.datetime.now())
             hidden_text = output
 
-            if not api_enabled:
-                chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4 = set_openai_api_key(OPENAI_API_KEY, USE_GPT4_DEFAULT)
-                api_enabled = True
-            
-            if chain:
-                # Set OpenAI key
-                import openai
-                openai.api_key = api_key
-                if not monologue:
-                    if use_embeddings:
-                        if inp and inp.strip() != "":
-                            if docsearch:
-                                docs = docsearch.similarity_search(inp)
-                                output = str(qa_chain.run(input_documents=docs, question=inp))
-                            else:
-                                output, hidden_text = "Please supply some text in the the Embeddings tab.", None
+            # if chain:
+            # Set OpenAI key
+            import openai
+            openai.api_key = api_key
+            if not monologue:
+                if use_embeddings:
+                    if inp and inp.strip() != "":
+                        if docsearch:
+                            docs = docsearch.similarity_search(inp)
+                            output = str(qa_chain.run(input_documents=docs, question=inp))
                         else:
-                            output, hidden_text = "What's on your mind?", None
+                            output, hidden_text = "Please supply some text in the the Embeddings tab.", None
                     else:
-                        complete_inp = inp
-                        # If the user has selected an N1-N5 language level and an output language,
-                        # then put that in the request so that the response is at that level of language proficiency.
-                        if lang_level and lang_level != LANG_LEVEL_DEFAULT \
-                                and translate_to and translate_to != TRANSLATE_TO_DEFAULT:
-                            # if lang_level starts with "N" and a single digit and a space, then it is an N1-N5 level
-                            if re.match(r"N\d ", lang_level):
-                                # jlp_level = the first two characters of lang_level
-                                jlpt_level = lang_level[:2]
-                                print("jlpt_level", lang_level)
-                                jlpt_range = "N5"  # default to N5
-                                if jlpt_level == "N1":
-                                    jlpt_range = "N1, N2, N3, N4 and N5"
-                                elif jlpt_level == "N2":
-                                    jlpt_range = "N2, N3, N4 and N5"
-                                elif jlpt_level == "N3":
-                                    jlpt_range = "N3, N4 and N5"
-                                elif jlpt_level == "N4":
-                                    jlpt_range = "N4 and N"
-
-                                complete_inp = inp + " Your response should be short, and in " + \
-                                               translate_to + " using only vocabulary and grammar equivalent to that found in JLPT level " + \
-                                               jlpt_range + ". Don't translate anything back into English."
-
-                        print("complete_inp to run_chain", complete_inp)
-                        output, hidden_text = run_chain(chain, inp=complete_inp, capture_hidden_text=trace_chain)
+                        output, hidden_text = "What's on your mind?", None
                 else:
-                    output, hidden_text = inp, None
+                    complete_inp = inp
+                    # If the user has selected an N1-N5 language level and an output language,
+                    # then put that in the request so that the response is at that level of language proficiency.
+                    if lang_level and lang_level != LANG_LEVEL_DEFAULT \
+                            and translate_to and translate_to != TRANSLATE_TO_DEFAULT:
+                        # if lang_level starts with "N" and a single digit and a space, then it is an N1-N5 level
+                        if re.match(r"N\d ", lang_level):
+                            # jlp_level = the first two characters of lang_level
+                            jlpt_level = lang_level[:2]
+                            print("jlpt_level", lang_level)
+                            jlpt_range = "N5"  # default to N5
+                            if jlpt_level == "N1":
+                                jlpt_range = "N1, N2, N3, N4 and N5"
+                            elif jlpt_level == "N2":
+                                jlpt_range = "N2, N3, N4 and N5"
+                            elif jlpt_level == "N3":
+                                jlpt_range = "N3, N4 and N5"
+                            elif jlpt_level == "N4":
+                                jlpt_range = "N4 and N"
+
+                            complete_inp = inp + " Your response should be short, and in " + \
+                                            translate_to + " using only vocabulary and grammar equivalent to that found in JLPT level " + \
+                                            jlpt_range + ". Don't translate anything back into English."
+
+                    print("complete_inp to run_chain", complete_inp)
+                    output, hidden_text = run_chain(chain, inp=complete_inp, capture_hidden_text=trace_chain)
+            else:
+                output, hidden_text = inp, None
+
+            # end of if chain
 
             output = transform_text(output, express_chain, num_words, formality, anticipation_level, joy_level,
                                     trust_level,
@@ -1044,7 +1047,8 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
         Powered by <a href='https://github.com/hwchase17/langchain'>LangChain 🦜️🔗</a>
         </center>""")
 
-    message.submit(chat, inputs=[openai_api_key_textbox, message, history_state, chain_state, trace_chain_state,
+    # message.submit(chat, inputs=[openai_api_key_textbox, message, history_state, chain_state, trace_chain_state,
+    message.submit(chat, inputs=[openai_api_key, message, history_state, chain_state, trace_chain_state,
                                  speak_text_state, talking_head_state, monologue_state,
                                  express_chain_state, num_words_state, formality_state,
                                  anticipation_level_state, joy_level_state, trust_level_state, fear_level_state,
@@ -1055,7 +1059,8 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                 #    outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
                    outputs=[chatbot, history_state, message])
 
-    submit.click(chat, inputs=[openai_api_key_textbox, message, history_state, chain_state, trace_chain_state,
+    # submit.click(chat, inputs=[openai_api_key_textbox, message, history_state, chain_state, trace_chain_state,
+    submit.click(chat, inputs=[openai_api_key, message, history_state, chain_state, trace_chain_state,
                                speak_text_state, talking_head_state, monologue_state,
                                express_chain_state, num_words_state, formality_state,
                                anticipation_level_state, joy_level_state, trust_level_state, fear_level_state,
@@ -1066,14 +1071,14 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                 #  outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
                  outputs=[chatbot, history_state, message])
 
-    # openai_api_key_textbox.change(set_openai_api_key,
-    #                               inputs=[openai_api_key_textbox, use_gpt4_state],
-    #                               outputs=[chain_state, express_chain_state, llm_state, embeddings_state,
-    #                                        qa_chain_state, memory_state, use_gpt4_state])
-    # openai_api_key_textbox.submit(set_openai_api_key,
-    #                               inputs=[openai_api_key_textbox, use_gpt4_state],
-    #                               outputs=[chain_state, express_chain_state, llm_state, embeddings_state,
-    #                                        qa_chain_state, memory_state, use_gpt4_state])
+    openai_api_key_textbox.change(set_openai_api_key,
+                                  inputs=[openai_api_key_textbox, use_gpt4_state],
+                                  outputs=[chain_state, express_chain_state, llm_state, embeddings_state,
+                                           qa_chain_state, memory_state, use_gpt4_state])
+    openai_api_key_textbox.submit(set_openai_api_key,
+                                  inputs=[openai_api_key_textbox, use_gpt4_state],
+                                  outputs=[chain_state, express_chain_state, llm_state, embeddings_state,
+                                           qa_chain_state, memory_state, use_gpt4_state])
 
 # block.launch(debug=True, share=True)
 block.launch(debug=True, server_name="0.0.0.0")
