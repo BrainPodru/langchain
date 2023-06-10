@@ -731,17 +731,17 @@ def update_use_embeddings(widget, state):
 
 
 with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
-    llm_state = gr.State(lambda: llm)
+    llm_state = gr.State()
     history_state = gr.State()
-    chain_state = gr.State(lambda: chain)
-    express_chain_state = gr.State(lambda: express_chain)
+    chain_state = gr.State()
+    express_chain_state = gr.State()
     tools_list_state = gr.State(TOOLS_DEFAULT_LIST)
     trace_chain_state = gr.State(False)
     speak_text_state = gr.State(False)
     talking_head_state = gr.State(False)
     monologue_state = gr.State(False)  # Takes the input and repeats it back to the user, optionally transforming it.
     force_translate_state = gr.State(FORCE_TRANSLATE_DEFAULT)  #
-    memory_state = gr.State(memory)
+    memory_state = gr.State()
 
     # Pertains to Express-inator functionality
     num_words_state = gr.State(NUM_WORDS_DEFAULT)
@@ -762,8 +762,8 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
     whisper_lang_state = gr.State(WHISPER_DETECT_LANG)
 
     # Pertains to question answering functionality
-    embeddings_state = gr.State(embeddings)
-    qa_chain_state = gr.State(lambda: qa_chain)
+    embeddings_state = gr.State()
+    qa_chain_state = gr.State()
     docsearch_state = gr.State()
     use_embeddings_state = gr.State(False)
 
