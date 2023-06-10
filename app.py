@@ -92,6 +92,8 @@ WHISPER_URL = "https://api.runpod.ai/v2/faster-whisper/runsync"
 AWS_DEFAULT_REGION = os.environ["AWS_DEFAULT_REGION"]
 BUCKET_NAME = 'langchain57'
 
+api_enabled = False
+
 s3 = boto3.client('s3')
 
 
@@ -407,7 +409,6 @@ def set_openai_api_key(api_key, use_gpt4):
         return chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4
     return None, None, None, None, None, None, None
 
-chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4 = set_openai_api_key(OPENAI_API_KEY, USE_GPT4_DEFAULT)
 
 
 def run_chain(chain, inp, capture_hidden_text):
@@ -516,6 +517,10 @@ class ChatWrapper:
             # If chain is None, that is because no API key was provided.
             output = "Please paste your OpenAI key from openai.com to use this app. " + str(datetime.datetime.now())
             hidden_text = output
+
+            if not api_enabled:
+                chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4 = set_openai_api_key(OPENAI_API_KEY, USE_GPT4_DEFAULT)
+                api_enabled = True
             
             if chain:
                 # Set OpenAI key
@@ -1039,7 +1044,8 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
         Powered by <a href='https://github.com/hwchase17/langchain'>LangChain 🦜️🔗</a>
         </center>""")
 
-    message.submit(chat, inputs=[openai_api_key_textbox, message, history_state, chain_state, trace_chain_state,
+    # message.submit(chat, inputs=[openai_api_key_textbox, message, history_state, chain_state, trace_chain_state,
+    message.submit(chat, inputs=[message, history_state, chain_state, trace_chain_state,
                                  speak_text_state, talking_head_state, monologue_state,
                                  express_chain_state, num_words_state, formality_state,
                                  anticipation_level_state, joy_level_state, trust_level_state, fear_level_state,
@@ -1050,7 +1056,8 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                 #    outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
                    outputs=[chatbot, history_state, message])
 
-    submit.click(chat, inputs=[openai_api_key_textbox, message, history_state, chain_state, trace_chain_state,
+    # submit.click(chat, inputs=[openai_api_key_textbox, message, history_state, chain_state, trace_chain_state,
+    submit.click(chat, inputs=[message, history_state, chain_state, trace_chain_state,
                                speak_text_state, talking_head_state, monologue_state,
                                express_chain_state, num_words_state, formality_state,
                                anticipation_level_state, joy_level_state, trust_level_state, fear_level_state,
