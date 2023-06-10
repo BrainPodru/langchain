@@ -277,7 +277,7 @@ def transform_text(desc, express_chain, num_words, formality,
         lang_level_str = lang_level_frag + ", " if translate_to == TRANSLATE_TO_DEFAULT else ""
 
     translate_to_str = ""
-    if translate_to != TRANSLATE_TO_DEFAULT and (
+    if translate_to == TRANSLATE_TO_DEFAULT and (
             force_translate or (lang_level != LANG_LEVEL_DEFAULT and not is_N_level) or
             literary_style != LITERARY_STYLE_DEFAULT or len(emotions_str) > 0 or len(formality_str) > 0 or
             num_words_prompt != ""):
