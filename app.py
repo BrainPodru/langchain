@@ -143,6 +143,19 @@ def transcribe(aud_inp, whisper_lang):
 
     response = requests.post(WHISPER_URL, json=payload, headers=headers)
 
+    print(response.text)
+    # data = response.json()
+    # if data['status'] == 'IN_QUEUE':
+    #     job_id = data['id']
+    #     url = "https://api.runpod.ai/v2/faster-whisper/status/" + job_id
+    #     while data['status'] == 'IN_QUEUE':
+    #         response = requests.get(url, headers=headers)
+    #         data = response.json()
+    #         print(data)
+    #     return data['output']['transcription']
+    # else:
+    #     return ""
+
     data = response.json()
     segment = data['output']['segments'][0]
     text = segment['text']
@@ -1017,4 +1030,5 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                   outputs=[chain_state, express_chain_state, llm_state, embeddings_state,
                                            qa_chain_state, memory_state, use_gpt4_state])
 
-block.launch(debug=True, share=True)
+# block.launch(debug=True, share=True)
+block.launch(debug=True)
