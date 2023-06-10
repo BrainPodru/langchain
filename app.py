@@ -778,10 +778,10 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                                 show_label=False, lines=1, type='password', value=OPENAI_API_KEY)
 
         with gr.Row():
-        #     with gr.Column(scale=1, min_width=TALKING_HEAD_WIDTH, visible=False):
-        #         speak_text_cb = gr.Checkbox(label="Enable speech", value=False)
-        #         speak_text_cb.change(update_foo, inputs=[speak_text_cb, speak_text_state],
-        #                              outputs=[speak_text_state])
+            with gr.Column(scale=1, min_width=TALKING_HEAD_WIDTH, visible=True):
+                speak_text_cb = gr.Checkbox(label="Enable speech", value=False)
+                speak_text_cb.change(update_foo, inputs=[speak_text_cb, speak_text_state],
+                                     outputs=[speak_text_state])
 
         #         my_file = gr.File(label="Upload a file", type="file", visible=False)
         #         tmp_file = gr.File(LOOPING_TALKING_HEAD, visible=False)
