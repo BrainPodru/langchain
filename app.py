@@ -54,11 +54,6 @@ OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 WHISPER_API_KEY = os.environ["WHISPER_API_KEY"]
 openai_api_key = OPENAI_API_KEY
 
-# TODO: Change to True for production
-DEBUG = False
-
-# Pertains to question answering functionality
-QUESTION_ANSWERING_MODEL_PATH = "models/question_answering/faiss
 
 TOOLS_LIST = ['wolfram-alpha', 'pal-math',
               'pal-colored-objects', 'google-search', 'news-api','tmdb-api','wikipedia']  # 'serpapi', 'google-search','news-api','tmdb-api','open-meteo-api'
