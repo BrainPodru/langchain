@@ -1053,8 +1053,8 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                  qa_chain_state, docsearch_state, use_embeddings_state,
                                  force_translate_state],
                     # outputs=[chatbot, history_state, audio_html, tmp_aud_file, message])
-                    outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
-
+                    # outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
+                    outputs=[chatbot, history_state, my_file, audio_html, tmp_aud_file, message])
                 #    outputs=[chatbot, history_state, message])
 
     submit.click(chat, inputs=[openai_api_key_textbox, message, history_state, chain_state, trace_chain_state,
@@ -1066,7 +1066,8 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                qa_chain_state, docsearch_state, use_embeddings_state,
                                force_translate_state],
                 #  outputs=[chatbot, history_state, audio_html, tmp_aud_file, message])
-                 outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
+                #  outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
+                 outputs=[chatbot, history_state, my_file, audio_html, tmp_aud_file, message])
                 #  outputs=[chatbot, history_state, message])
 
     openai_api_key_textbox.change(set_openai_api_key,
