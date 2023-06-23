@@ -63,7 +63,7 @@ BUG_FOUND_MSG = "Congratulations, you've found a bug in this application!"
 AUTH_ERR_MSG = "Please paste your OpenAI key from openai.com to use this application. "
 MAX_TOKENS = 2048
 
-LOOPING_TALKING_HEAD = ""
+LOOPING_TALKING_HEAD = "videos/Masahiro.mp4"
 TALKING_HEAD_WIDTH = "192"
 MAX_TALKING_HEAD_TEXT_LENGTH = 155
 
