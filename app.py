@@ -792,7 +792,8 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                 tmp_file = gr.File(LOOPING_TALKING_HEAD, visible=False)
                 # tmp_file_url = "/file=" + tmp_file.value['name']
                 htm_video = create_html_video(LOOPING_TALKING_HEAD, TALKING_HEAD_WIDTH)
-                video_html = gr.HTML(htm_video, visible=False)
+                # video_html = gr.HTML(htm_video, visible=False)
+                video_html = gr.HTML(htm_video)
 
                 # my_aud_file = gr.File(label="Audio file", type="file", visible=True)
                 tmp_aud_file = gr.File("audios/tempfile.mp3", visible=False)
@@ -1039,28 +1040,8 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                          inputs=[embeddings_text_box, embeddings_state, qa_chain_state],
                                          outputs=[docsearch_state])
 
-    gr.HTML("""
-        <p>This application, developed by <a href='https://www.linkedin.com/in/javafxpert/'>James L. Weaver</a>, 
-        demonstrates a conversational agent implemented with OpenAI GPT-3.5 and LangChain. 
-        When necessary, it leverages tools for complex math, searching the internet, and accessing news and weather.
-        Uses talking heads from <a href='https://exh.ai/'>Ex-Human</a>.
-        For faster inference without waiting in queue, you may duplicate the space.
-        </p>""")
-
-    gr.HTML("""
-<form action="https://www.paypal.com/donate" method="post" target="_blank">
-<input type="hidden" name="business" value="AK8BVNALBXSPQ" />
-<input type="hidden" name="no_recurring" value="0" />
-<input type="hidden" name="item_name" value="Please consider helping to defray the cost of APIs such as SerpAPI and WolframAlpha that this app uses." />
-<input type="hidden" name="currency_code" value="USD" />
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-</form>
-    """)
 
     gr.HTML("""<center>
-        <a href="https://huggingface.co/spaces/JavaFXpert/Chat-GPT-LangChain?duplicate=true">
-        <img style="margin-top: 0em; margin-bottom: 0em" src="https://bit.ly/3gLdBN6" alt="Duplicate Space"></a>
         Powered by <a href='https://github.com/hwchase17/langchain'>LangChain 🦜️🔗</a>
         </center>""")
 
