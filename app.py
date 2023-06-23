@@ -788,7 +788,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                 speak_text_cb.change(update_foo, inputs=[speak_text_cb, speak_text_state],
                                      outputs=[speak_text_state])
 
-                # my_file = gr.File(label="Upload a file", type="file", visible=False)
+                my_file = gr.File(label="Upload a file", type="file", visible=False)
                 # tmp_file = gr.File(LOOPING_TALKING_HEAD, visible=False)
                 # tmp_file_url = "/file=" + tmp_file.value['name']
                 # htm_video = create_html_video(LOOPING_TALKING_HEAD, TALKING_HEAD_WIDTH)
