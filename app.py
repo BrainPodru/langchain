@@ -376,7 +376,7 @@ def set_openai_api_key(api_key, use_gpt4):
     If no api_key, then None is returned.
     """
     if api_key and api_key.startswith("sk-") and len(api_key) > 50:
-        # os.environ["OPENAI_API_KEY"] = api_key
+        os.environ["OPENAI_API_KEY"] = api_key
         print("\n\n ++++++++++++++ Setting OpenAI API key ++++++++++++++ \n\n")
         print(str(datetime.datetime.now()) + ": Before OpenAI, OPENAI_API_KEY length: " + str(
             len(os.environ["OPENAI_API_KEY"])))
@@ -409,7 +409,7 @@ def set_openai_api_key(api_key, use_gpt4):
         return chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4
     return None, None, None, None, None, None, None
 
-chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4 = set_openai_api_key(OPENAI_API_KEY, USE_GPT4_DEFAULT)
+# chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4 = set_openai_api_key(OPENAI_API_KEY, USE_GPT4_DEFAULT)
 
 
 def run_chain(chain, inp, capture_hidden_text):
@@ -519,7 +519,7 @@ class ChatWrapper:
             output = "Please paste your OpenAI key from openai.com to use this app. " + str(datetime.datetime.now())
             hidden_text = output
 
-            # if chain:
+            if chain:
             # Set OpenAI key
             import openai
             openai.api_key = api_key
@@ -577,22 +577,22 @@ class ChatWrapper:
 
             html_video, temp_file, html_audio, temp_aud_file = None, None, None, None
             if speak_text:
-                # if talking_head:
-                #     if len(output) <= MAX_TALKING_HEAD_TEXT_LENGTH:
-                #         html_video, temp_file = do_html_video_speak(output, translate_to)
-                #     else:
-                #         temp_file = LOOPING_TALKING_HEAD
-                #         html_video = create_html_video(temp_file, TALKING_HEAD_WIDTH)
-                #         html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
-                # else:
+                if talking_head:
+                    if len(output) <= MAX_TALKING_HEAD_TEXT_LENGTH:
+                        html_video, temp_file = do_html_video_speak(output, translate_to)
+                    else:
+                        temp_file = LOOPING_TALKING_HEAD
+                        html_video = create_html_video(temp_file, TALKING_HEAD_WIDTH)
+                        html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
+                else:
                 html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
             else:
-                # if talking_head:
-                #     temp_file = LOOPING_TALKING_HEAD
-                #     html_video = create_html_video(temp_file, TALKING_HEAD_WIDTH)
-                # else: 
-                #     # html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
-                #     # html_video = create_html_video(temp_file, "128")
+                if talking_head:
+                    temp_file = LOOPING_TALKING_HEAD
+                    html_video = create_html_video(temp_file, TALKING_HEAD_WIDTH)
+                else:
+                    # html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
+                    # html_video = create_html_video(temp_file, "128")
                 pass
 
         except Exception as e:
@@ -638,8 +638,7 @@ def do_html_audio_speak(words_to_speak, polly_language):
                 with open('audios/tempfile.mp3', 'wb') as f:
                     f.write(stream.read())
                 temp_aud_file = gr.File("audios/tempfile.mp3")
-                # temp_aud_file_url = "/file=" + temp_aud_file.value['name']
-                temp_aud_file_url = temp_aud_file.value['name']
+                temp_aud_file_url = "/file=" + temp_aud_file.value['name']
                 html_audio = f'<audio autoplay><source src={temp_aud_file_url} type="audio/mp3"></audio>'
             except IOError as error:
                 # Could not write to file, exit gracefully
@@ -773,7 +772,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
     use_gpt4_state = gr.State(USE_GPT4_DEFAULT)
 
     with gr.Tab("Chat"):
-        with gr.Row(visible=True):
+        with gr.Row():
             with gr.Column():
                 gr.HTML(
                     """<b><center>GPT + WolframAlpha + Whisper</center></b>
@@ -790,11 +789,10 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                      outputs=[speak_text_state])
 
                 my_file = gr.File(label="Upload a file", type="file", visible=False)
-                # tmp_file = gr.File(LOOPING_TALKING_HEAD, visible=False)
+                tmp_file = gr.File(LOOPING_TALKING_HEAD, visible=False)
                 # tmp_file_url = "/file=" + tmp_file.value['name']
-                # htm_video = create_html_video(LOOPING_TALKING_HEAD, TALKING_HEAD_WIDTH)
-                # video_html = gr.HTML(htm_video)
-                video_html = ''
+                htm_video = create_html_video(LOOPING_TALKING_HEAD, TALKING_HEAD_WIDTH)
+                video_html = gr.HTML(htm_video)
 
                 # my_aud_file = gr.File(label="Audio file", type="file", visible=True)
                 tmp_aud_file = gr.File("audios/tempfile.mp3", visible=False)
@@ -879,13 +877,13 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
         force_translate_cb.change(update_foo, inputs=[force_translate_cb, force_translate_state],
                                   outputs=[force_translate_state])
 
-        speak_text_cb = gr.Checkbox(label="Speak text from agent", value=False)
-        speak_text_cb.change(update_foo, inputs=[speak_text_cb, speak_text_state],
-                             outputs=[speak_text_state])
+        # speak_text_cb = gr.Checkbox(label="Speak text from agent", value=False)
+        # speak_text_cb.change(update_foo, inputs=[speak_text_cb, speak_text_state],
+        #                      outputs=[speak_text_state])
 
-        # talking_head_cb = gr.Checkbox(label="Show talking head", value=False)
-        # talking_head_cb.change(update_talking_head, inputs=[talking_head_cb, talking_head_state],
-        #                        outputs=[talking_head_state, video_html])
+        talking_head_cb = gr.Checkbox(label="Show talking head", value=True)
+        talking_head_cb.change(update_talking_head, inputs=[talking_head_cb, talking_head_state],
+                               outputs=[talking_head_state, video_html])
 
         monologue_cb = gr.Checkbox(label="Babel fish mode (translate/restate what you enter, no conversational agent)",
                                    value=False)
@@ -1041,7 +1039,28 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                          inputs=[embeddings_text_box, embeddings_state, qa_chain_state],
                                          outputs=[docsearch_state])
 
+    gr.HTML("""
+        <p>This application, developed by <a href='https://www.linkedin.com/in/javafxpert/'>James L. Weaver</a>, 
+        demonstrates a conversational agent implemented with OpenAI GPT-3.5 and LangChain. 
+        When necessary, it leverages tools for complex math, searching the internet, and accessing news and weather.
+        Uses talking heads from <a href='https://exh.ai/'>Ex-Human</a>.
+        For faster inference without waiting in queue, you may duplicate the space.
+        </p>""")
+
+    gr.HTML("""
+<form action="https://www.paypal.com/donate" method="post" target="_blank">
+<input type="hidden" name="business" value="AK8BVNALBXSPQ" />
+<input type="hidden" name="no_recurring" value="0" />
+<input type="hidden" name="item_name" value="Please consider helping to defray the cost of APIs such as SerpAPI and WolframAlpha that this app uses." />
+<input type="hidden" name="currency_code" value="USD" />
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+</form>
+    """)
+
     gr.HTML("""<center>
+        <a href="https://huggingface.co/spaces/JavaFXpert/Chat-GPT-LangChain?duplicate=true">
+        <img style="margin-top: 0em; margin-bottom: 0em" src="https://bit.ly/3gLdBN6" alt="Duplicate Space"></a>
         Powered by <a href='https://github.com/hwchase17/langchain'>LangChain 🦜️🔗</a>
         </center>""")
 
@@ -1053,10 +1072,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                  lang_level_state, translate_to_state, literary_style_state,
                                  qa_chain_state, docsearch_state, use_embeddings_state,
                                  force_translate_state],
-                    # outputs=[chatbot, history_state, audio_html, tmp_aud_file, message])
-                    # outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
-                    outputs=[chatbot, history_state, my_file, audio_html, tmp_aud_file, message])
-                #    outputs=[chatbot, history_state, message])
+                   outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
 
     submit.click(chat, inputs=[openai_api_key_textbox, message, history_state, chain_state, trace_chain_state,
                                speak_text_state, talking_head_state, monologue_state,
@@ -1066,10 +1082,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                lang_level_state, translate_to_state, literary_style_state,
                                qa_chain_state, docsearch_state, use_embeddings_state,
                                force_translate_state],
-                #  outputs=[chatbot, history_state, audio_html, tmp_aud_file, message])
-                #  outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
-                 outputs=[chatbot, history_state, my_file, audio_html, tmp_aud_file, message])
-                #  outputs=[chatbot, history_state, message])
+                 outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
 
     openai_api_key_textbox.change(set_openai_api_key,
                                   inputs=[openai_api_key_textbox, use_gpt4_state],
