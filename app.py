@@ -728,8 +728,9 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                 tmp_file = gr.File(LOOPING_TALKING_HEAD, visible=False)
                 # tmp_file_url = "/file=" + tmp_file.value['name']
                 htm_video = create_html_video(LOOPING_TALKING_HEAD, TALKING_HEAD_WIDTH)
-                video_html = gr.HTML(htm_video, visible=False)
-                # video_html = gr.HTML(htm_video)
+                # video_html = gr.HTML(htm_video, visible=False)
+                if talking_head_state:
+                    video_html = gr.HTML(htm_video)
 
                 # my_aud_file = gr.File(label="Audio file", type="file", visible=True)
                 tmp_aud_file = gr.File("audios/tempfile.mp3", visible=False)
@@ -834,7 +835,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                   inputs=[translate_to_radio, translate_to_state],
                                   outputs=[translate_to_state])
 
-    with gr.Tab("Formality"):
+    with gr.Tab("Formality", visible=False):
         formality_radio = gr.Radio(label="Formality:",
                                    choices=[FORMALITY_DEFAULT, "Casual", "Polite", "Honorific"],
                                    value=FORMALITY_DEFAULT)
@@ -842,7 +843,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                inputs=[formality_radio, formality_state],
                                outputs=[formality_state])
 
-    with gr.Tab("Lit Style"):
+    with gr.Tab("Lit Style", visible=False):
         literary_style_radio = gr.Radio(label="Literary style:", choices=[
             LITERARY_STYLE_DEFAULT, "Prose", "Story", "Summary", "Outline", "Bullets", "Poetry", "Haiku", "Limerick",
             "Rap",
@@ -853,7 +854,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                     inputs=[literary_style_radio, literary_style_state],
                                     outputs=[literary_style_state])
 
-    with gr.Tab("Emotions"):
+    with gr.Tab("Emotions", visible=False):
         anticipation_level_radio = gr.Radio(label="Anticipation level:",
                                             choices=[EMOTION_DEFAULT, "Interest", "Anticipation", "Vigilance"],
                                             value=EMOTION_DEFAULT)
