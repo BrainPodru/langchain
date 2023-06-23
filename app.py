@@ -834,88 +834,88 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                   inputs=[translate_to_radio, translate_to_state],
                                   outputs=[translate_to_state])
 
-    with gr.Tab("Formality", visible=False):
-        formality_radio = gr.Radio(label="Formality:",
-                                   choices=[FORMALITY_DEFAULT, "Casual", "Polite", "Honorific"],
-                                   value=FORMALITY_DEFAULT)
-        formality_radio.change(update_foo,
-                               inputs=[formality_radio, formality_state],
-                               outputs=[formality_state])
+    # with gr.Tab("Formality", visible=False):
+    #     formality_radio = gr.Radio(label="Formality:",
+    #                                choices=[FORMALITY_DEFAULT, "Casual", "Polite", "Honorific"],
+    #                                value=FORMALITY_DEFAULT)
+    #     formality_radio.change(update_foo,
+    #                            inputs=[formality_radio, formality_state],
+    #                            outputs=[formality_state])
 
-    with gr.Tab("Lit Style", visible=False):
-        literary_style_radio = gr.Radio(label="Literary style:", choices=[
-            LITERARY_STYLE_DEFAULT, "Prose", "Story", "Summary", "Outline", "Bullets", "Poetry", "Haiku", "Limerick",
-            "Rap",
-            "Joke", "Knock-knock", "FAQ"],
-                                        value=LITERARY_STYLE_DEFAULT)
+    # with gr.Tab("Lit Style", visible=False):
+    #     literary_style_radio = gr.Radio(label="Literary style:", choices=[
+    #         LITERARY_STYLE_DEFAULT, "Prose", "Story", "Summary", "Outline", "Bullets", "Poetry", "Haiku", "Limerick",
+    #         "Rap",
+    #         "Joke", "Knock-knock", "FAQ"],
+    #                                     value=LITERARY_STYLE_DEFAULT)
 
-        literary_style_radio.change(update_foo,
-                                    inputs=[literary_style_radio, literary_style_state],
-                                    outputs=[literary_style_state])
+    #     literary_style_radio.change(update_foo,
+    #                                 inputs=[literary_style_radio, literary_style_state],
+    #                                 outputs=[literary_style_state])
 
-    with gr.Tab("Emotions", visible=False):
-        anticipation_level_radio = gr.Radio(label="Anticipation level:",
-                                            choices=[EMOTION_DEFAULT, "Interest", "Anticipation", "Vigilance"],
-                                            value=EMOTION_DEFAULT)
-        anticipation_level_radio.change(update_foo,
-                                        inputs=[anticipation_level_radio, anticipation_level_state],
-                                        outputs=[anticipation_level_state])
+    # with gr.Tab("Emotions", visible=False):
+    #     anticipation_level_radio = gr.Radio(label="Anticipation level:",
+    #                                         choices=[EMOTION_DEFAULT, "Interest", "Anticipation", "Vigilance"],
+    #                                         value=EMOTION_DEFAULT)
+    #     anticipation_level_radio.change(update_foo,
+    #                                     inputs=[anticipation_level_radio, anticipation_level_state],
+    #                                     outputs=[anticipation_level_state])
 
-        joy_level_radio = gr.Radio(label="Joy level:",
-                                   choices=[EMOTION_DEFAULT, "Serenity", "Joy", "Ecstasy"],
-                                   value=EMOTION_DEFAULT)
-        joy_level_radio.change(update_foo,
-                               inputs=[joy_level_radio, joy_level_state],
-                               outputs=[joy_level_state])
+    #     joy_level_radio = gr.Radio(label="Joy level:",
+    #                                choices=[EMOTION_DEFAULT, "Serenity", "Joy", "Ecstasy"],
+    #                                value=EMOTION_DEFAULT)
+    #     joy_level_radio.change(update_foo,
+    #                            inputs=[joy_level_radio, joy_level_state],
+    #                            outputs=[joy_level_state])
 
-        trust_level_radio = gr.Radio(label="Trust level:",
-                                     choices=[EMOTION_DEFAULT, "Acceptance", "Trust", "Admiration"],
-                                     value=EMOTION_DEFAULT)
-        trust_level_radio.change(update_foo,
-                                 inputs=[trust_level_radio, trust_level_state],
-                                 outputs=[trust_level_state])
+    #     trust_level_radio = gr.Radio(label="Trust level:",
+    #                                  choices=[EMOTION_DEFAULT, "Acceptance", "Trust", "Admiration"],
+    #                                  value=EMOTION_DEFAULT)
+    #     trust_level_radio.change(update_foo,
+    #                              inputs=[trust_level_radio, trust_level_state],
+    #                              outputs=[trust_level_state])
 
-        fear_level_radio = gr.Radio(label="Fear level:",
-                                    choices=[EMOTION_DEFAULT, "Apprehension", "Fear", "Terror"],
-                                    value=EMOTION_DEFAULT)
-        fear_level_radio.change(update_foo,
-                                inputs=[fear_level_radio, fear_level_state],
-                                outputs=[fear_level_state])
+    #     fear_level_radio = gr.Radio(label="Fear level:",
+    #                                 choices=[EMOTION_DEFAULT, "Apprehension", "Fear", "Terror"],
+    #                                 value=EMOTION_DEFAULT)
+    #     fear_level_radio.change(update_foo,
+    #                             inputs=[fear_level_radio, fear_level_state],
+    #                             outputs=[fear_level_state])
 
-        surprise_level_radio = gr.Radio(label="Surprise level:",
-                                        choices=[EMOTION_DEFAULT, "Distraction", "Surprise", "Amazement"],
-                                        value=EMOTION_DEFAULT)
-        surprise_level_radio.change(update_foo,
-                                    inputs=[surprise_level_radio, surprise_level_state],
-                                    outputs=[surprise_level_state])
+    #     surprise_level_radio = gr.Radio(label="Surprise level:",
+    #                                     choices=[EMOTION_DEFAULT, "Distraction", "Surprise", "Amazement"],
+    #                                     value=EMOTION_DEFAULT)
+    #     surprise_level_radio.change(update_foo,
+    #                                 inputs=[surprise_level_radio, surprise_level_state],
+    #                                 outputs=[surprise_level_state])
 
-        sadness_level_radio = gr.Radio(label="Sadness level:",
-                                       choices=[EMOTION_DEFAULT, "Pensiveness", "Sadness", "Grief"],
-                                       value=EMOTION_DEFAULT)
-        sadness_level_radio.change(update_foo,
-                                   inputs=[sadness_level_radio, sadness_level_state],
-                                   outputs=[sadness_level_state])
+    #     sadness_level_radio = gr.Radio(label="Sadness level:",
+    #                                    choices=[EMOTION_DEFAULT, "Pensiveness", "Sadness", "Grief"],
+    #                                    value=EMOTION_DEFAULT)
+    #     sadness_level_radio.change(update_foo,
+    #                                inputs=[sadness_level_radio, sadness_level_state],
+    #                                outputs=[sadness_level_state])
 
-        disgust_level_radio = gr.Radio(label="Disgust level:",
-                                       choices=[EMOTION_DEFAULT, "Boredom", "Disgust", "Loathing"],
-                                       value=EMOTION_DEFAULT)
-        disgust_level_radio.change(update_foo,
-                                   inputs=[disgust_level_radio, disgust_level_state],
-                                   outputs=[disgust_level_state])
+    #     disgust_level_radio = gr.Radio(label="Disgust level:",
+    #                                    choices=[EMOTION_DEFAULT, "Boredom", "Disgust", "Loathing"],
+    #                                    value=EMOTION_DEFAULT)
+    #     disgust_level_radio.change(update_foo,
+    #                                inputs=[disgust_level_radio, disgust_level_state],
+    #                                outputs=[disgust_level_state])
 
-        anger_level_radio = gr.Radio(label="Anger level:",
-                                     choices=[EMOTION_DEFAULT, "Annoyance", "Anger", "Rage"],
-                                     value=EMOTION_DEFAULT)
-        anger_level_radio.change(update_foo,
-                                 inputs=[anger_level_radio, anger_level_state],
-                                 outputs=[anger_level_state])
+    #     anger_level_radio = gr.Radio(label="Anger level:",
+    #                                  choices=[EMOTION_DEFAULT, "Annoyance", "Anger", "Rage"],
+    #                                  value=EMOTION_DEFAULT)
+    #     anger_level_radio.change(update_foo,
+    #                              inputs=[anger_level_radio, anger_level_state],
+    #                              outputs=[anger_level_state])
 
-    with gr.Tab("Max Words"):
-        num_words_slider = gr.Slider(label="Max number of words to generate (0 for don't care)",
-                                     value=NUM_WORDS_DEFAULT, minimum=0, maximum=MAX_WORDS, step=10)
-        num_words_slider.change(update_foo,
-                                inputs=[num_words_slider, num_words_state],
-                                outputs=[num_words_state])
+    # with gr.Tab("Max Words"):
+    #     num_words_slider = gr.Slider(label="Max number of words to generate (0 for don't care)",
+    #                                  value=NUM_WORDS_DEFAULT, minimum=0, maximum=MAX_WORDS, step=10)
+    #     num_words_slider.change(update_foo,
+    #                             inputs=[num_words_slider, num_words_state],
+    #                             outputs=[num_words_state])
 
     with gr.Tab("Embeddings"):
         embeddings_text_box = gr.Textbox(label="Enter text for embeddings and hit Create:",
