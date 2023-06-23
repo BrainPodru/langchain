@@ -794,11 +794,11 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
         #         htm_video = create_html_video(LOOPING_TALKING_HEAD, TALKING_HEAD_WIDTH)
         #         video_html = gr.HTML(htm_video)
 
-        #         # my_aud_file = gr.File(label="Audio file", type="file", visible=True)
-        #         tmp_aud_file = gr.File("audios/tempfile.mp3", visible=False)
-        #         tmp_aud_file_url = "/file=" + tmp_aud_file.value['name']
-        #         htm_audio = f'<audio><source src={tmp_aud_file_url} type="audio/mp3"></audio>'
-        #         audio_html = gr.HTML(htm_audio)
+                # my_aud_file = gr.File(label="Audio file", type="file", visible=True)
+                tmp_aud_file = gr.File("audios/tempfile.mp3", visible=False)
+                tmp_aud_file_url = "/file=" + tmp_aud_file.value['name']
+                htm_audio = f'<audio><source src={tmp_aud_file_url} type="audio/mp3"></audio>'
+                audio_html = gr.HTML(htm_audio)
 
             with gr.Column(scale=7):
                 chatbot = gr.Chatbot()
