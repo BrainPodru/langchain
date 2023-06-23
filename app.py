@@ -792,8 +792,8 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                 tmp_file = gr.File(LOOPING_TALKING_HEAD, visible=False)
                 # tmp_file_url = "/file=" + tmp_file.value['name']
                 htm_video = create_html_video(LOOPING_TALKING_HEAD, TALKING_HEAD_WIDTH)
-                # video_html = gr.HTML(htm_video, visible=False)
-                video_html = gr.HTML(htm_video)
+                video_html = gr.HTML(htm_video, visible=False)
+                # video_html = gr.HTML(htm_video)
 
                 # my_aud_file = gr.File(label="Audio file", type="file", visible=True)
                 tmp_aud_file = gr.File("audios/tempfile.mp3", visible=False)
@@ -911,7 +911,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
             "Korean", "Norwegian", "Polish",
             "Portuguese (Brazilian)", "Portuguese (European)", "Romanian", "Russian", "Spanish (European)",
             "Spanish (Mexican)", "Spanish (US)", "Swedish", "Turkish", "Ukrainian", "Welsh"],
-                                      value=WHISPER_DETECT_LANG)
+                                      value="Russian")
 
         whisper_lang_radio.change(update_foo,
                                   inputs=[whisper_lang_radio, whisper_lang_state],
