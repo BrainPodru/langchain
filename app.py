@@ -10,11 +10,6 @@ import gradio as gr
 import requests
 import time
 
-
-#  UNCOMMENT TO USE WHISPER
-# import warnings
-# import whisper
-
 from langchain import ConversationChain, LLMChain
 
 from langchain.agents import load_tools, initialize_agent, AgentType
@@ -96,32 +91,6 @@ BUCKET_NAME = 'langchain57'
 
 s3 = boto3.client('s3')
 
-
-# UNCOMMENT TO USE WHISPER
-# warnings.filterwarnings("ignore")
-# WHISPER_MODEL = whisper.load_model("tiny")
-# print("WHISPER_MODEL", WHISPER_MODEL)
-
-
-# UNCOMMENT TO USE LOCAL WHISPER
-# def transcribe(aud_inp, whisper_lang):
-#     if aud_inp is None:
-#         return ""
-#     aud = whisper.load_audio(aud_inp)
-#     aud = whisper.pad_or_trim(aud)
-#     mel = whisper.log_mel_spectrogram(aud).to(WHISPER_MODEL.device)
-#     _, probs = WHISPER_MODEL.detect_language(mel)
-#     options = whisper.DecodingOptions()
-#     if whisper_lang != WHISPER_DETECT_LANG:
-#         whisper_lang_code = POLLY_VOICE_DATA.get_whisper_lang_code(whisper_lang)
-#         options = whisper.DecodingOptions(language=whisper_lang_code)
-#     result = whisper.decode(WHISPER_MODEL, mel, options)
-#     print("result.text", result.text)
-#     result_text = ""
-#     if result and result.text:
-#         result_text = result.text
-#     return result_text
-
 # SERVERLESS WHISPER
 def transcribe(aud_inp, whisper_lang):
     if aud_inp is None:
@@ -158,24 +127,11 @@ def transcribe(aud_inp, whisper_lang):
 
     response = requests.post(WHISPER_URL, json=payload, headers=headers)
 
-    print(response.text)
-    # data = response.json()
-    # if data['status'] == 'IN_QUEUE':
-    #     job_id = data['id']
-    #     url = "https://api.runpod.ai/v2/faster-whisper/status/" + job_id
-    #     while data['status'] == 'IN_QUEUE':
-    #         response = requests.get(url, headers=headers)
-    #         data = response.json()
-    #         print(data)
-    #     return data['output']['transcription']
-    # else:
-    #     return ""
-
     data = response.json()
     segment = data['output']['segments'][0]
     text = segment['text']
 
-    print("whisper.text:", text)
+    # print("whisper.text:", text)
 
     return text
 
@@ -201,26 +157,6 @@ def share_url(aud_inp):
     url = "https://" + BUCKET_NAME + ".s3." + AWS_DEFAULT_REGION + ".amazonaws.com/" + dest_key
 
     return url    
-
-
-# TEMPORARY FOR TESTING
-def transcribe_dummy(aud_inp_tb, whisper_lang):
-    if aud_inp_tb is None:
-        return ""
-    # aud = whisper.load_audio(aud_inp)
-    # aud = whisper.pad_or_trim(aud)
-    # mel = whisper.log_mel_spectrogram(aud).to(WHISPER_MODEL.device)
-    # _, probs = WHISPER_MODEL.detect_language(mel)
-    # options = whisper.DecodingOptions()
-    # options = whisper.DecodingOptions(language="ja")
-    # result = whisper.decode(WHISPER_MODEL, mel, options)
-    result_text = "Whisper will detect language"
-    if whisper_lang != WHISPER_DETECT_LANG:
-        whisper_lang_code = POLLY_VOICE_DATA.get_whisper_lang_code(whisper_lang)
-        result_text = f"Whisper will use lang code: {whisper_lang_code}"
-    print("result_text", result_text)
-    return aud_inp_tb
-
 
 # Pertains to Express-inator functionality
 def transform_text(desc, express_chain, num_words, formality,
@@ -816,51 +752,6 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                        interactive=True, streaming=False, format="mp3")
             audio_comp.change(transcribe, inputs=[audio_comp, whisper_lang_state], outputs=[message])
 
-        # TEMPORARY FOR TESTING
-        # with gr.Row():
-        #     audio_comp_tb = gr.Textbox(label="Just say it!", lines=1)
-        #     audio_comp_tb.submit(transcribe_dummy, inputs=[audio_comp_tb, whisper_lang_state], outputs=[message])
-
-        with gr.Accordion("General examples", open=False):
-            gr.Examples(
-                examples=["How many people live in Canada?",
-                          "What is 2 to the 30th power?",
-                          "If x+y=10 and x-y=4, what are x and y?",
-                          "How much did it rain in SF today?",
-                          "Get me information about the movie 'Avatar'",
-                          "What are the top tech headlines in the US?",
-                          "On the desk, you see two blue booklets, two purple booklets, and two yellow pairs of sunglasses - "
-                          "if I remove all the pairs of sunglasses from the desk, how many purple items remain on it?"],
-                inputs=message
-            )
-        with gr.Accordion("Language practice examples. Select N5-N1 on Output Language tab. Best with GPT-4", open=False):
-            gr.Examples(
-                examples=[
-                    "Let's play three truths and a lie",
-                    "Let's play a game of rock paper scissors",
-                    "Let's play a game of 20 questions. Please think of something and I will try to guess what it is",
-                    "Let's play a game of 20 questions. I am thinking of something so please try to guess what it is",
-                    "Please ask me a question about cats",
-                    "Please write a short story about a dog and a cat trying to find their way home. Then ask me a multiple "
-                    "choice question about the story, but don’t reveal the answer until I attempt to answer it.",
-                    "Please write a dialog between students named Mary and Takeshi in "
-                    "which they are planning a study date. Then ask me a multiple choice question about the "
-                    "dialog, but don’t reveal the answer until I attempt to answer it.",
-                    "Please write a dialog between a waiter and a customer at an expensive restaurant. Then ask "
-                    "me a multiple choice question about the dialog, but don’t reveal the answer until I "
-                    "attempt to answer it.",
-                    "Please write a dialog between a mother and a child in which the child is asking for a "
-                    "present. Then ask me a multiple choice question about the dialog, but don’t reveal the "
-                    "answer until I attempt to answer it.",
-                    "Please write a dialog between a student and a teacher in which the student is asking for "
-                    "help with their homework. Then ask me a multiple choice question about the dialog, but "
-                    "don’t reveal the answer until I attempt to answer it.",
-                    "Please write a dialog between a customer and a salesperson in which the customer is "
-                    "looking for a new pair of shoes. Then ask me a multiple choice question about the dialog, "
-                    "but don’t reveal the answer until I attempt to answer it.",
-                    ],
-                inputs=message
-            )
 
     with gr.Tab("Settings"):
         tools_cb_group = gr.CheckboxGroup(label="Tools:", choices=TOOLS_LIST,
