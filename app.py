@@ -638,9 +638,9 @@ def do_html_audio_speak(words_to_speak, polly_language):
                 with open('audios/tempfile.mp3', 'wb') as f:
                     f.write(stream.read())
                 temp_aud_file = gr.File("audios/tempfile.mp3")
-                temp_aud_file_url = "/file=" + temp_aud_file.value['name']
-                # html_audio = f'<audio autoplay><source src={temp_aud_file_url} type="audio/mp3"></audio>'
-                html_audio = f'<audio autoplay><source src=./audios/tempfile.mp3 type="audio/mp3"></audio>'
+                # temp_aud_file_url = "/file=" + temp_aud_file.value['name']
+                temp_aud_file_url = temp_aud_file.value['name']
+                html_audio = f'<audio autoplay><source src={temp_aud_file_url} type="audio/mp3"></audio>'
             except IOError as error:
                 # Could not write to file, exit gracefully
                 print(error)
