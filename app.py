@@ -793,6 +793,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                 # tmp_file_url = "/file=" + tmp_file.value['name']
                 # htm_video = create_html_video(LOOPING_TALKING_HEAD, TALKING_HEAD_WIDTH)
                 # video_html = gr.HTML(htm_video)
+                video_html = ''
 
                 # my_aud_file = gr.File(label="Audio file", type="file", visible=True)
                 tmp_aud_file = gr.File("audios/tempfile.mp3", visible=False)
