@@ -520,48 +520,48 @@ class ChatWrapper:
             hidden_text = output
 
             if chain:
-            # Set OpenAI key
-            import openai
-            openai.api_key = api_key
-            if not monologue:
-                if use_embeddings:
-                    if inp and inp.strip() != "":
-                        if docsearch:
-                            docs = docsearch.similarity_search(inp)
-                            output = str(qa_chain.run(input_documents=docs, question=inp))
+                # Set OpenAI key
+                import openai
+                openai.api_key = api_key
+                if not monologue:
+                    if use_embeddings:
+                        if inp and inp.strip() != "":
+                            if docsearch:
+                                docs = docsearch.similarity_search(inp)
+                                output = str(qa_chain.run(input_documents=docs, question=inp))
+                            else:
+                                output, hidden_text = "Please supply some text in the the Embeddings tab.", None
                         else:
-                            output, hidden_text = "Please supply some text in the the Embeddings tab.", None
+                            output, hidden_text = "What's on your mind?", None
                     else:
-                        output, hidden_text = "What's on your mind?", None
+                        complete_inp = inp
+                        # If the user has selected an N1-N5 language level and an output language,
+                        # then put that in the request so that the response is at that level of language proficiency.
+                        if lang_level and lang_level != LANG_LEVEL_DEFAULT \
+                                and translate_to and translate_to != TRANSLATE_TO_DEFAULT:
+                            # if lang_level starts with "N" and a single digit and a space, then it is an N1-N5 level
+                            if re.match(r"N\d ", lang_level):
+                                # jlp_level = the first two characters of lang_level
+                                jlpt_level = lang_level[:2]
+                                print("jlpt_level", lang_level)
+                                jlpt_range = "N5"  # default to N5
+                                if jlpt_level == "N1":
+                                    jlpt_range = "N1, N2, N3, N4 and N5"
+                                elif jlpt_level == "N2":
+                                    jlpt_range = "N2, N3, N4 and N5"
+                                elif jlpt_level == "N3":
+                                    jlpt_range = "N3, N4 and N5"
+                                elif jlpt_level == "N4":
+                                    jlpt_range = "N4 and N"
+
+                                complete_inp = inp + " Your response should be short, and in " + \
+                                                translate_to + " using only vocabulary and grammar equivalent to that found in JLPT level " + \
+                                                jlpt_range + ". Don't translate anything back into English."
+
+                        print("complete_inp to run_chain", complete_inp)
+                        output, hidden_text = run_chain(chain, inp=complete_inp, capture_hidden_text=trace_chain)
                 else:
-                    complete_inp = inp
-                    # If the user has selected an N1-N5 language level and an output language,
-                    # then put that in the request so that the response is at that level of language proficiency.
-                    if lang_level and lang_level != LANG_LEVEL_DEFAULT \
-                            and translate_to and translate_to != TRANSLATE_TO_DEFAULT:
-                        # if lang_level starts with "N" and a single digit and a space, then it is an N1-N5 level
-                        if re.match(r"N\d ", lang_level):
-                            # jlp_level = the first two characters of lang_level
-                            jlpt_level = lang_level[:2]
-                            print("jlpt_level", lang_level)
-                            jlpt_range = "N5"  # default to N5
-                            if jlpt_level == "N1":
-                                jlpt_range = "N1, N2, N3, N4 and N5"
-                            elif jlpt_level == "N2":
-                                jlpt_range = "N2, N3, N4 and N5"
-                            elif jlpt_level == "N3":
-                                jlpt_range = "N3, N4 and N5"
-                            elif jlpt_level == "N4":
-                                jlpt_range = "N4 and N"
-
-                            complete_inp = inp + " Your response should be short, and in " + \
-                                            translate_to + " using only vocabulary and grammar equivalent to that found in JLPT level " + \
-                                            jlpt_range + ". Don't translate anything back into English."
-
-                    print("complete_inp to run_chain", complete_inp)
-                    output, hidden_text = run_chain(chain, inp=complete_inp, capture_hidden_text=trace_chain)
-            else:
-                output, hidden_text = inp, None
+                    output, hidden_text = inp, None
 
             # end of if chain
 
