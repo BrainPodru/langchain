@@ -881,7 +881,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
         # speak_text_cb.change(update_foo, inputs=[speak_text_cb, speak_text_state],
         #                      outputs=[speak_text_state])
 
-        talking_head_cb = gr.Checkbox(label="Show talking head", value=True)
+        talking_head_cb = gr.Checkbox(label="Show talking head", value=False)
         talking_head_cb.change(update_talking_head, inputs=[talking_head_cb, talking_head_state],
                                outputs=[talking_head_state, video_html])
 
