@@ -788,8 +788,8 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                 speak_text_cb.change(update_foo, inputs=[speak_text_cb, speak_text_state],
                                      outputs=[speak_text_state])
 
-                my_file = gr.File(label="Upload a file", type="file", visible=False)
-                tmp_file = gr.File(LOOPING_TALKING_HEAD, visible=False)
+                # my_file = gr.File(label="Upload a file", type="file", visible=False)
+                # tmp_file = gr.File(LOOPING_TALKING_HEAD, visible=False)
                 # tmp_file_url = "/file=" + tmp_file.value['name']
                 htm_video = create_html_video(LOOPING_TALKING_HEAD, TALKING_HEAD_WIDTH)
                 video_html = gr.HTML(htm_video)
@@ -1051,7 +1051,9 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                  lang_level_state, translate_to_state, literary_style_state,
                                  qa_chain_state, docsearch_state, use_embeddings_state,
                                  force_translate_state],
-                   outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
+                    outputs=[chatbot, history_state, video_html, audio_html, tmp_aud_file, message])
+                    # outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
+
                 #    outputs=[chatbot, history_state, message])
 
     submit.click(chat, inputs=[openai_api_key_textbox, message, history_state, chain_state, trace_chain_state,
@@ -1062,7 +1064,8 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                lang_level_state, translate_to_state, literary_style_state,
                                qa_chain_state, docsearch_state, use_embeddings_state,
                                force_translate_state],
-                 outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
+                 outputs=[chatbot, history_state, video_html, audio_html, tmp_aud_file, message])
+                #  outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
                 #  outputs=[chatbot, history_state, message])
 
     openai_api_key_textbox.change(set_openai_api_key,
