@@ -585,7 +585,7 @@ class ChatWrapper:
                         html_video = create_html_video(temp_file, TALKING_HEAD_WIDTH)
                         html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
                 else:
-                html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
+                    html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
             else:
                 if talking_head:
                     temp_file = LOOPING_TALKING_HEAD
@@ -593,7 +593,7 @@ class ChatWrapper:
                 else:
                     # html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
                     # html_video = create_html_video(temp_file, "128")
-                pass
+                    pass
 
         except Exception as e:
             raise e
