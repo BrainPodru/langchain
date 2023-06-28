@@ -910,12 +910,12 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
     #                              inputs=[anger_level_radio, anger_level_state],
     #                              outputs=[anger_level_state])
 
-    # with gr.Tab("Max Words"):
-    #     num_words_slider = gr.Slider(label="Max number of words to generate (0 for don't care)",
-    #                                  value=NUM_WORDS_DEFAULT, minimum=0, maximum=MAX_WORDS, step=10)
-    #     num_words_slider.change(update_foo,
-    #                             inputs=[num_words_slider, num_words_state],
-    #                             outputs=[num_words_state])
+    with gr.Tab("Max Words"):
+        num_words_slider = gr.Slider(label="Max number of words to generate (0 for don't care)",
+                                     value=NUM_WORDS_DEFAULT, minimum=0, maximum=MAX_WORDS, step=10)
+        num_words_slider.change(update_foo,
+                                inputs=[num_words_slider, num_words_state],
+                                outputs=[num_words_state])
 
     with gr.Tab("Embeddings"):
         embeddings_text_box = gr.Textbox(label="Enter text for embeddings and hit Create:",
