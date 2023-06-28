@@ -51,12 +51,12 @@ openai_api_key = OPENAI_API_KEY
 
 
 TOOLS_LIST = ['wolfram-alpha', 'pal-math',
-              'pal-colored-objects', 'google-search', 'news-api','tmdb-api','wikipedia']  # 'serpapi', 'google-search','news-api','tmdb-api','open-meteo-api'
-TOOLS_DEFAULT_LIST = ['wolfram-alpha', 'google-search', 'pal-math', 'pal-colored-objects', 'news-api','tmdb-api','wikipedia']
+              'google-search', 'news-api','tmdb-api','wikipedia']  # 'serpapi', 'google-search','news-api','tmdb-api','open-meteo-api'
+TOOLS_DEFAULT_LIST = ['wolfram-alpha', 'google-search', 'pal-math', 'news-api','tmdb-api','wikipedia']
 BUG_FOUND_MSG = "Congratulations, you've found a bug in this application!"
 # AUTH_ERR_MSG = "Please paste your OpenAI key from openai.com to use this application. It is not necessary to hit a button or key after pasting it."
 AUTH_ERR_MSG = "Please paste your OpenAI key from openai.com to use this application. "
-MAX_TOKENS = 2048
+MAX_TOKENS = 4096
 
 LOOPING_TALKING_HEAD = "videos/Masahiro.mp4"
 TALKING_HEAD_WIDTH = "192"
@@ -215,7 +215,7 @@ def transform_text(desc, express_chain, num_words, formality,
         lang_level_str = lang_level_frag + ", " if translate_to == TRANSLATE_TO_DEFAULT else ""
 
     translate_to_str = ""
-    if translate_to == TRANSLATE_TO_DEFAULT and (
+    if translate_to != TRANSLATE_TO_DEFAULT and (
             force_translate or (lang_level != LANG_LEVEL_DEFAULT and not is_N_level) or
             literary_style != LITERARY_STYLE_DEFAULT or len(emotions_str) > 0 or len(formality_str) > 0 or
             num_words_prompt != ""):
