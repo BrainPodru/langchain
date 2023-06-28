@@ -269,12 +269,14 @@ def transform_text(desc, express_chain, num_words, formality,
     trans_instr = num_words_prompt + formality_str + emotions_str + lang_level_str + translate_to_str + literary_style_str
 
     print("trans_instr: " + trans_instr)
+    print('desc: ' + desc)
     
     if express_chain and len(trans_instr.strip()) > 0:
         generated_text = express_chain.run(
             {'original_words': desc, 'num_words': num_words_prompt, 'formality': formality_str,
              'emotions': emotions_str, 'lang_level': lang_level_str, 'translate_to': translate_to_str,
              'literary_style': literary_style_str}).strip()
+        print("generated_text 1 : " + generated_text)
     else:
         print("Not transforming text")
         generated_text = desc
