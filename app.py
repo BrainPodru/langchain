@@ -8,12 +8,10 @@ import datetime
 import boto3
 import gradio as gr
 import requests
-import time
-
 
 #  UNCOMMENT TO USE WHISPER
-# import warnings
-# import whisper
+import warnings
+import whisper
 
 from langchain import ConversationChain, LLMChain
 
@@ -43,27 +41,18 @@ from langchain.vectorstores.faiss import FAISS
 from langchain.docstore.document import Document
 from langchain.chains.question_answering import load_qa_chain
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
 news_api_key = os.environ["NEWS_API_KEY"]
 tmdb_bearer_token = os.environ["TMDB_BEARER_TOKEN"]
-serpapi_api_key = os.environ["SERPAPI_API_KEY"]
-OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
-WHISPER_API_KEY = os.environ["WHISPER_API_KEY"]
-openai_api_key = OPENAI_API_KEY
-
 
 TOOLS_LIST = ['wolfram-alpha', 'pal-math',
-              'pal-colored-objects', 'google-search', 'news-api','tmdb-api','wikipedia']  # 'serpapi', 'google-search','news-api','tmdb-api','open-meteo-api'
-TOOLS_DEFAULT_LIST = ['wolfram-alpha', 'google-search', 'pal-math', 'pal-colored-objects', 'news-api','tmdb-api','wikipedia']
+              'pal-colored-objects']  # 'serpapi', 'google-search','news-api','tmdb-api','open-meteo-api'
+TOOLS_DEFAULT_LIST = ['pal-math']
 BUG_FOUND_MSG = "Congratulations, you've found a bug in this application!"
 # AUTH_ERR_MSG = "Please paste your OpenAI key from openai.com to use this application. It is not necessary to hit a button or key after pasting it."
 AUTH_ERR_MSG = "Please paste your OpenAI key from openai.com to use this application. "
-MAX_TOKENS = 2048
+MAX_TOKENS = 512
 
-LOOPING_TALKING_HEAD = ""
+LOOPING_TALKING_HEAD = "videos/Masahiro.mp4"
 TALKING_HEAD_WIDTH = "192"
 MAX_TALKING_HEAD_TEXT_LENGTH = 155
 
@@ -74,7 +63,7 @@ FORMALITY_DEFAULT = "N/A"
 TEMPERATURE_DEFAULT = 0.5
 EMOTION_DEFAULT = "N/A"
 LANG_LEVEL_DEFAULT = "N/A"
-TRANSLATE_TO_DEFAULT = "Russian"
+TRANSLATE_TO_DEFAULT = "N/A"
 LITERARY_STYLE_DEFAULT = "N/A"
 PROMPT_TEMPLATE = PromptTemplate(
     input_variables=["original_words", "num_words", "formality", "emotions", "lang_level", "translate_to",
@@ -82,125 +71,42 @@ PROMPT_TEMPLATE = PromptTemplate(
     template="Restate {num_words}{formality}{emotions}{lang_level}{translate_to}{literary_style}the following: \n{original_words}\n",
 )
 
-FORCE_TRANSLATE_DEFAULT = True  # TODO: Change back to True?
+FORCE_TRANSLATE_DEFAULT = False  # TODO: Change back to True?
 USE_GPT4_DEFAULT = False
 
 POLLY_VOICE_DATA = PollyVoiceData()
 AZURE_VOICE_DATA = AzureVoiceData()
 
 # Pertains to WHISPER functionality
-WHISPER_DETECT_LANG = "Russian"
-WHISPER_URL = "https://api.runpod.ai/v2/faster-whisper/runsync"
-AWS_DEFAULT_REGION = os.environ["AWS_DEFAULT_REGION"]
-BUCKET_NAME = 'langchain57'
+WHISPER_DETECT_LANG = "Detect language"
 
-s3 = boto3.client('s3')
+# UNCOMMENT TO USE WHISPER
+warnings.filterwarnings("ignore")
+WHISPER_MODEL = whisper.load_model("tiny")
+print("WHISPER_MODEL", WHISPER_MODEL)
 
 
 # UNCOMMENT TO USE WHISPER
-# warnings.filterwarnings("ignore")
-# WHISPER_MODEL = whisper.load_model("tiny")
-# print("WHISPER_MODEL", WHISPER_MODEL)
-
-
-# UNCOMMENT TO USE LOCAL WHISPER
-# def transcribe(aud_inp, whisper_lang):
-#     if aud_inp is None:
-#         return ""
-#     aud = whisper.load_audio(aud_inp)
-#     aud = whisper.pad_or_trim(aud)
-#     mel = whisper.log_mel_spectrogram(aud).to(WHISPER_MODEL.device)
-#     _, probs = WHISPER_MODEL.detect_language(mel)
-#     options = whisper.DecodingOptions()
-#     if whisper_lang != WHISPER_DETECT_LANG:
-#         whisper_lang_code = POLLY_VOICE_DATA.get_whisper_lang_code(whisper_lang)
-#         options = whisper.DecodingOptions(language=whisper_lang_code)
-#     result = whisper.decode(WHISPER_MODEL, mel, options)
-#     print("result.text", result.text)
-#     result_text = ""
-#     if result and result.text:
-#         result_text = result.text
-#     return result_text
-
-# SERVERLESS WHISPER
 def transcribe(aud_inp, whisper_lang):
     if aud_inp is None:
         return ""
-    
-    audio_url = share_url(aud_inp)
-
-    if whisper_lang == "Russian":
-        lang = "ru"
-    else:
-        lang = ""
-    
-    payload = {"input": {
-            "audio": audio_url,
-            "model": "base",
-            "transcription": "plain text",
-            "translate": False,
-            "language": lang,
-            "temperature": 0,
-            "best_of": 5,
-            "beam_size": 5,
-            "suppress_tokens": "-1",
-            "condition_on_previous_text": False,
-            "temperature_increment_on_fallback": 0.2,
-            "compression_ratio_threshold": 2.4,
-            "logprob_threshold": -1,
-            "no_speech_threshold": 0.6
-        }}
-    headers = {
-        "accept": "application/json",
-        "content-type": "application/json",
-        "Authorization": "Bearer " + WHISPER_API_KEY
-    }
-
-    response = requests.post(WHISPER_URL, json=payload, headers=headers)
-
-    print(response.text)
-    # data = response.json()
-    # if data['status'] == 'IN_QUEUE':
-    #     job_id = data['id']
-    #     url = "https://api.runpod.ai/v2/faster-whisper/status/" + job_id
-    #     while data['status'] == 'IN_QUEUE':
-    #         response = requests.get(url, headers=headers)
-    #         data = response.json()
-    #         print(data)
-    #     return data['output']['transcription']
-    # else:
-    #     return ""
-
-    data = response.json()
-    segment = data['output']['segments'][0]
-    text = segment['text']
-
-    print("whisper.text:", text)
-
-    return text
-
+    aud = whisper.load_audio(aud_inp)
+    aud = whisper.pad_or_trim(aud)
+    mel = whisper.log_mel_spectrogram(aud).to(WHISPER_MODEL.device)
+    _, probs = WHISPER_MODEL.detect_language(mel)
+    options = whisper.DecodingOptions()
+    if whisper_lang != WHISPER_DETECT_LANG:
+        whisper_lang_code = POLLY_VOICE_DATA.get_whisper_lang_code(whisper_lang)
+        options = whisper.DecodingOptions(language=whisper_lang_code)
+    result = whisper.decode(WHISPER_MODEL, mel, options)
+    print("result.text", result.text)
+    result_text = ""
+    if result and result.text:
+        result_text = result.text
+    return result_text
 
 # Temporarily address Wolfram Alpha SSL certificate issue
 ssl._create_default_https_context = ssl._create_unverified_context
-
-# AWS AUDIO FILE URL
-def share_url(aud_inp):
-    unix_time = int(time.time())
-    dest_key = f"{unix_time}_aud.mp3"
-
-    # upload file to aws
-    s3.upload_file(aud_inp, BUCKET_NAME, dest_key)
-
-    # set permission
-    response_acl = s3.put_object_acl(
-        Bucket=BUCKET_NAME,
-        Key=dest_key,
-        ACL='public-read',
-    )
-
-    url = "https://" + BUCKET_NAME + ".s3." + AWS_DEFAULT_REGION + ".amazonaws.com/" + dest_key
-
-    return url    
 
 
 # TEMPORARY FOR TESTING
@@ -279,7 +185,7 @@ def transform_text(desc, express_chain, num_words, formality,
         lang_level_str = lang_level_frag + ", " if translate_to == TRANSLATE_TO_DEFAULT else ""
 
     translate_to_str = ""
-    if translate_to == TRANSLATE_TO_DEFAULT and (
+    if translate_to != TRANSLATE_TO_DEFAULT and (
             force_translate or (lang_level != LANG_LEVEL_DEFAULT and not is_N_level) or
             literary_style != LITERARY_STYLE_DEFAULT or len(emotions_str) > 0 or len(formality_str) > 0 or
             num_words_prompt != ""):
@@ -288,10 +194,6 @@ def transform_text(desc, express_chain, num_words, formality,
         print("===is_N_level", is_N_level)
         translate_to_str = "translated to " + translate_to + (
             "" if lang_level == LANG_LEVEL_DEFAULT or is_N_level else " " + lang_level_frag) + ", "
-        
-    # print("===translate_to", translate_to)
-    # print("===translate_to_str", translate_to_str)
-    
 
     literary_style_str = ""
     if literary_style != LITERARY_STYLE_DEFAULT:
@@ -331,9 +233,6 @@ def transform_text(desc, express_chain, num_words, formality,
     )
 
     trans_instr = num_words_prompt + formality_str + emotions_str + lang_level_str + translate_to_str + literary_style_str
-
-    print("trans_instr: " + trans_instr)
-    
     if express_chain and len(trans_instr.strip()) > 0:
         generated_text = express_chain.run(
             {'original_words': desc, 'num_words': num_words_prompt, 'formality': formality_str,
@@ -376,7 +275,7 @@ def set_openai_api_key(api_key, use_gpt4):
     If no api_key, then None is returned.
     """
     if api_key and api_key.startswith("sk-") and len(api_key) > 50:
-        # os.environ["OPENAI_API_KEY"] = api_key
+        os.environ["OPENAI_API_KEY"] = api_key
         print("\n\n ++++++++++++++ Setting OpenAI API key ++++++++++++++ \n\n")
         print(str(datetime.datetime.now()) + ": Before OpenAI, OPENAI_API_KEY length: " + str(
             len(os.environ["OPENAI_API_KEY"])))
@@ -386,8 +285,7 @@ def set_openai_api_key(api_key, use_gpt4):
             print("Trying to use llm ChatOpenAI with gpt-4")
         else:
             print("Trying to use llm ChatOpenAI with gpt-3.5-turbo")
-            # llm = ChatOpenAI(temperature=0, max_tokens=MAX_TOKENS, model_name="gpt-3.5-turbo")
-            llm = ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo")
+            llm = ChatOpenAI(temperature=0, max_tokens=MAX_TOKENS, model_name="gpt-3.5-turbo")
 
         print(str(datetime.datetime.now()) + ": After OpenAI, OPENAI_API_KEY length: " + str(
             len(os.environ["OPENAI_API_KEY"])))
@@ -405,11 +303,9 @@ def set_openai_api_key(api_key, use_gpt4):
 
         print(str(datetime.datetime.now()) + ": After load_chain, OPENAI_API_KEY length: " + str(
             len(os.environ["OPENAI_API_KEY"])))
-        # os.environ["OPENAI_API_KEY"] = ""
+        os.environ["OPENAI_API_KEY"] = ""
         return chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4
     return None, None, None, None, None, None, None
-
-chain, express_chain, llm, embeddings, qa_chain, memory, use_gpt4 = set_openai_api_key(OPENAI_API_KEY, USE_GPT4_DEFAULT)
 
 
 def run_chain(chain, inp, capture_hidden_text):
@@ -427,7 +323,6 @@ def run_chain(chain, inp, capture_hidden_text):
             error_msg = AUTH_ERR_MSG + str(datetime.datetime.now()) + ". " + str(ae)
             print("error_msg", error_msg)
         except RateLimitError as rle:
-            # sleep(20)
             error_msg = "\n\nRateLimitError: " + str(rle)
         except ValueError as ve:
             pass
@@ -519,51 +414,49 @@ class ChatWrapper:
             output = "Please paste your OpenAI key from openai.com to use this app. " + str(datetime.datetime.now())
             hidden_text = output
 
-            # if chain:
-            # Set OpenAI key
-            import openai
-            openai.api_key = api_key
-            if not monologue:
-                if use_embeddings:
-                    if inp and inp.strip() != "":
-                        if docsearch:
-                            docs = docsearch.similarity_search(inp)
-                            output = str(qa_chain.run(input_documents=docs, question=inp))
+            if chain:
+                # Set OpenAI key
+                import openai
+                openai.api_key = api_key
+                if not monologue:
+                    if use_embeddings:
+                        if inp and inp.strip() != "":
+                            if docsearch:
+                                docs = docsearch.similarity_search(inp)
+                                output = str(qa_chain.run(input_documents=docs, question=inp))
+                            else:
+                                output, hidden_text = "Please supply some text in the the Embeddings tab.", None
                         else:
-                            output, hidden_text = "Please supply some text in the the Embeddings tab.", None
+                            output, hidden_text = "What's on your mind?", None
                     else:
-                        output, hidden_text = "What's on your mind?", None
+                        complete_inp = inp
+                        # If the user has selected an N1-N5 language level and an output language,
+                        # then put that in the request so that the response is at that level of language proficiency.
+                        if lang_level and lang_level != LANG_LEVEL_DEFAULT \
+                                and translate_to and translate_to != TRANSLATE_TO_DEFAULT:
+                            # if lang_level starts with "N" and a single digit and a space, then it is an N1-N5 level
+                            if re.match(r"N\d ", lang_level):
+                                # jlp_level = the first two characters of lang_level
+                                jlpt_level = lang_level[:2]
+                                print("jlpt_level", lang_level)
+                                jlpt_range = "N5"  # default to N5
+                                if jlpt_level == "N1":
+                                    jlpt_range = "N1, N2, N3, N4 and N5"
+                                elif jlpt_level == "N2":
+                                    jlpt_range = "N2, N3, N4 and N5"
+                                elif jlpt_level == "N3":
+                                    jlpt_range = "N3, N4 and N5"
+                                elif jlpt_level == "N4":
+                                    jlpt_range = "N4 and N"
+
+                                complete_inp = inp + " Your response should be short, and in " + \
+                                               translate_to + " using only vocabulary and grammar equivalent to that found in JLPT level " + \
+                                               jlpt_range + ". Don't translate anything back into English."
+
+                        print("complete_inp to run_chain", complete_inp)
+                        output, hidden_text = run_chain(chain, inp=complete_inp, capture_hidden_text=trace_chain)
                 else:
-                    complete_inp = inp
-                    # If the user has selected an N1-N5 language level and an output language,
-                    # then put that in the request so that the response is at that level of language proficiency.
-                    if lang_level and lang_level != LANG_LEVEL_DEFAULT \
-                            and translate_to and translate_to != TRANSLATE_TO_DEFAULT:
-                        # if lang_level starts with "N" and a single digit and a space, then it is an N1-N5 level
-                        if re.match(r"N\d ", lang_level):
-                            # jlp_level = the first two characters of lang_level
-                            jlpt_level = lang_level[:2]
-                            print("jlpt_level", lang_level)
-                            jlpt_range = "N5"  # default to N5
-                            if jlpt_level == "N1":
-                                jlpt_range = "N1, N2, N3, N4 and N5"
-                            elif jlpt_level == "N2":
-                                jlpt_range = "N2, N3, N4 and N5"
-                            elif jlpt_level == "N3":
-                                jlpt_range = "N3, N4 and N5"
-                            elif jlpt_level == "N4":
-                                jlpt_range = "N4 and N"
-
-                            complete_inp = inp + " Your response should be short, and in " + \
-                                            translate_to + " using only vocabulary and grammar equivalent to that found in JLPT level " + \
-                                            jlpt_range + ". Don't translate anything back into English."
-
-                    print("complete_inp to run_chain", complete_inp)
-                    output, hidden_text = run_chain(chain, inp=complete_inp, capture_hidden_text=trace_chain)
-            else:
-                output, hidden_text = inp, None
-
-            # end of if chain
+                    output, hidden_text = inp, None
 
             output = transform_text(output, express_chain, num_words, formality, anticipation_level, joy_level,
                                     trust_level,
@@ -577,23 +470,23 @@ class ChatWrapper:
 
             html_video, temp_file, html_audio, temp_aud_file = None, None, None, None
             if speak_text:
-                # if talking_head:
-                #     if len(output) <= MAX_TALKING_HEAD_TEXT_LENGTH:
-                #         html_video, temp_file = do_html_video_speak(output, translate_to)
-                #     else:
-                #         temp_file = LOOPING_TALKING_HEAD
-                #         html_video = create_html_video(temp_file, TALKING_HEAD_WIDTH)
-                #         html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
-                # else:
-                html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
+                if talking_head:
+                    if len(output) <= MAX_TALKING_HEAD_TEXT_LENGTH:
+                        html_video, temp_file = do_html_video_speak(output, translate_to)
+                    else:
+                        temp_file = LOOPING_TALKING_HEAD
+                        html_video = create_html_video(temp_file, TALKING_HEAD_WIDTH)
+                        html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
+                else:
+                    html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
             else:
-                # if talking_head:
-                #     temp_file = LOOPING_TALKING_HEAD
-                #     html_video = create_html_video(temp_file, TALKING_HEAD_WIDTH)
-                # else: 
-                #     # html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
-                #     # html_video = create_html_video(temp_file, "128")
-                pass
+                if talking_head:
+                    temp_file = LOOPING_TALKING_HEAD
+                    html_video = create_html_video(temp_file, TALKING_HEAD_WIDTH)
+                else:
+                    # html_audio, temp_aud_file = do_html_audio_speak(output, translate_to)
+                    # html_video = create_html_video(temp_file, "128")
+                    pass
 
         except Exception as e:
             raise e
@@ -601,6 +494,7 @@ class ChatWrapper:
             self.lock.release()
         return history, history, html_video, temp_file, html_audio, temp_aud_file, ""
         # return history, history, html_audio, temp_aud_file, ""
+
 
 chat = ChatWrapper()
 
@@ -638,8 +532,7 @@ def do_html_audio_speak(words_to_speak, polly_language):
                 with open('audios/tempfile.mp3', 'wb') as f:
                     f.write(stream.read())
                 temp_aud_file = gr.File("audios/tempfile.mp3")
-                # temp_aud_file_url = "/file=" + temp_aud_file.value['name']
-                temp_aud_file_url = temp_aud_file.value['name']
+                temp_aud_file_url = "/file=" + temp_aud_file.value['name']
                 html_audio = f'<audio autoplay><source src={temp_aud_file_url} type="audio/mp3"></audio>'
             except IOError as error:
                 # Could not write to file, exit gracefully
@@ -741,7 +634,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
     tools_list_state = gr.State(TOOLS_DEFAULT_LIST)
     trace_chain_state = gr.State(False)
     speak_text_state = gr.State(False)
-    talking_head_state = gr.State(False)
+    talking_head_state = gr.State(True)
     monologue_state = gr.State(False)  # Takes the input and repeats it back to the user, optionally transforming it.
     force_translate_state = gr.State(FORCE_TRANSLATE_DEFAULT)  #
     memory_state = gr.State()
@@ -773,7 +666,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
     use_gpt4_state = gr.State(USE_GPT4_DEFAULT)
 
     with gr.Tab("Chat"):
-        with gr.Row(visible=True):
+        with gr.Row():
             with gr.Column():
                 gr.HTML(
                     """<b><center>GPT + WolframAlpha + Whisper</center></b>
@@ -781,7 +674,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                     <i><center>Experimental: N5-N1 levels for practicing any language</center></i>""")
 
             openai_api_key_textbox = gr.Textbox(placeholder="Paste your OpenAI API key (sk-...) and hit Enter",
-                                                show_label=False, lines=1, type='password', value=OPENAI_API_KEY)
+                                                show_label=False, lines=1, type='password')
 
         with gr.Row():
             with gr.Column(scale=1, min_width=TALKING_HEAD_WIDTH, visible=True):
@@ -790,11 +683,10 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                      outputs=[speak_text_state])
 
                 my_file = gr.File(label="Upload a file", type="file", visible=False)
-                # tmp_file = gr.File(LOOPING_TALKING_HEAD, visible=False)
+                tmp_file = gr.File(LOOPING_TALKING_HEAD, visible=False)
                 # tmp_file_url = "/file=" + tmp_file.value['name']
-                # htm_video = create_html_video(LOOPING_TALKING_HEAD, TALKING_HEAD_WIDTH)
-                # video_html = gr.HTML(htm_video)
-                video_html = ''
+                htm_video = create_html_video(LOOPING_TALKING_HEAD, TALKING_HEAD_WIDTH)
+                video_html = gr.HTML(htm_video)
 
                 # my_aud_file = gr.File(label="Audio file", type="file", visible=True)
                 tmp_aud_file = gr.File("audios/tempfile.mp3", visible=False)
@@ -814,7 +706,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
         # UNCOMMENT TO USE WHISPER
         with gr.Row():
             audio_comp = gr.Microphone(source="microphone", type="filepath", label="Just say it!",
-                                       interactive=True, streaming=False, format="mp3")
+                                       interactive=True, streaming=False)
             audio_comp.change(transcribe, inputs=[audio_comp, whisper_lang_state], outputs=[message])
 
         # TEMPORARY FOR TESTING
@@ -879,13 +771,13 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
         force_translate_cb.change(update_foo, inputs=[force_translate_cb, force_translate_state],
                                   outputs=[force_translate_state])
 
-        speak_text_cb = gr.Checkbox(label="Speak text from agent", value=False)
-        speak_text_cb.change(update_foo, inputs=[speak_text_cb, speak_text_state],
-                             outputs=[speak_text_state])
+        # speak_text_cb = gr.Checkbox(label="Speak text from agent", value=False)
+        # speak_text_cb.change(update_foo, inputs=[speak_text_cb, speak_text_state],
+        #                      outputs=[speak_text_state])
 
-        # talking_head_cb = gr.Checkbox(label="Show talking head", value=False)
-        # talking_head_cb.change(update_talking_head, inputs=[talking_head_cb, talking_head_state],
-        #                        outputs=[talking_head_state, video_html])
+        talking_head_cb = gr.Checkbox(label="Show talking head", value=True)
+        talking_head_cb.change(update_talking_head, inputs=[talking_head_cb, talking_head_state],
+                               outputs=[talking_head_state, video_html])
 
         monologue_cb = gr.Checkbox(label="Babel fish mode (translate/restate what you enter, no conversational agent)",
                                    value=False)
@@ -1041,7 +933,28 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                          inputs=[embeddings_text_box, embeddings_state, qa_chain_state],
                                          outputs=[docsearch_state])
 
+    gr.HTML("""
+        <p>This application, developed by <a href='https://www.linkedin.com/in/javafxpert/'>James L. Weaver</a>, 
+        demonstrates a conversational agent implemented with OpenAI GPT-3.5 and LangChain. 
+        When necessary, it leverages tools for complex math, searching the internet, and accessing news and weather.
+        Uses talking heads from <a href='https://exh.ai/'>Ex-Human</a>.
+        For faster inference without waiting in queue, you may duplicate the space.
+        </p>""")
+
+    gr.HTML("""
+<form action="https://www.paypal.com/donate" method="post" target="_blank">
+<input type="hidden" name="business" value="AK8BVNALBXSPQ" />
+<input type="hidden" name="no_recurring" value="0" />
+<input type="hidden" name="item_name" value="Please consider helping to defray the cost of APIs such as SerpAPI and WolframAlpha that this app uses." />
+<input type="hidden" name="currency_code" value="USD" />
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+</form>
+    """)
+
     gr.HTML("""<center>
+        <a href="https://huggingface.co/spaces/JavaFXpert/Chat-GPT-LangChain?duplicate=true">
+        <img style="margin-top: 0em; margin-bottom: 0em" src="https://bit.ly/3gLdBN6" alt="Duplicate Space"></a>
         Powered by <a href='https://github.com/hwchase17/langchain'>LangChain 🦜️🔗</a>
         </center>""")
 
@@ -1053,10 +966,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                  lang_level_state, translate_to_state, literary_style_state,
                                  qa_chain_state, docsearch_state, use_embeddings_state,
                                  force_translate_state],
-                    # outputs=[chatbot, history_state, audio_html, tmp_aud_file, message])
-                    # outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
-                    outputs=[chatbot, history_state, my_file, audio_html, tmp_aud_file, message])
-                #    outputs=[chatbot, history_state, message])
+                   outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
 
     submit.click(chat, inputs=[openai_api_key_textbox, message, history_state, chain_state, trace_chain_state,
                                speak_text_state, talking_head_state, monologue_state,
@@ -1066,10 +976,7 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                lang_level_state, translate_to_state, literary_style_state,
                                qa_chain_state, docsearch_state, use_embeddings_state,
                                force_translate_state],
-                #  outputs=[chatbot, history_state, audio_html, tmp_aud_file, message])
-                #  outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
-                 outputs=[chatbot, history_state, my_file, audio_html, tmp_aud_file, message])
-                #  outputs=[chatbot, history_state, message])
+                 outputs=[chatbot, history_state, video_html, my_file, audio_html, tmp_aud_file, message])
 
     openai_api_key_textbox.change(set_openai_api_key,
                                   inputs=[openai_api_key_textbox, use_gpt4_state],
@@ -1080,5 +987,4 @@ with gr.Blocks(css=".gradio-container {background-color: lightgray}") as block:
                                   outputs=[chain_state, express_chain_state, llm_state, embeddings_state,
                                            qa_chain_state, memory_state, use_gpt4_state])
 
-# block.launch(debug=True, share=True)
-block.launch(debug=True, server_name="0.0.0.0")
+block.launch(debug=True)
