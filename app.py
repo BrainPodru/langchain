@@ -325,8 +325,8 @@ def run_chain(chain, inp, capture_hidden_text):
         except RateLimitError as rle:
             error_msg = "\n\nRateLimitError: " + str(rle)
         except ValueError as ve:
-            pass
-            # error_msg = "\n\nValueError: " + str(ve)
+            # pass
+            error_msg = "\n\nValueError: " + str(ve)
         except InvalidRequestError as ire:
             error_msg = "\n\nInvalidRequestError: " + str(ire)
         except Exception as e:
@@ -368,8 +368,8 @@ def run_chain(chain, inp, capture_hidden_text):
         except RateLimitError as rle:
             output = "\n\nRateLimitError: " + str(rle)
         except ValueError as ve:
-            pass
-            # output = "\n\nValueError: " + str(ve)
+            # pass
+            output = "\n\nValueError: " + str(ve)
         except InvalidRequestError as ire:
             output = "\n\nInvalidRequestError: " + str(ire)
         except Exception as e:
